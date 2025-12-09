@@ -1,6 +1,9 @@
 package org.afterlike.openutils.module.handler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.handler.EventHandler;
@@ -22,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ModuleHandler {
 	private final @NotNull Minecraft mc = Minecraft.getMinecraft();
-	private final @NotNull List<@NotNull Module> moduleList = new ArrayList<>();
+	private final @NotNull List<@NotNull Module> moduleList = Collections
+			.synchronizedList(new ArrayList<>());
 	public void initialize() {
 		OpenUtils.get().getEventBus().subscribe(this);
 		// movement
@@ -48,7 +52,9 @@ public class ModuleHandler {
 	}
 
 	public @NotNull List<@NotNull Module> getModules() {
-		return Collections.unmodifiableList(moduleList);
+		synchronized (moduleList) {
+			return Collections.unmodifiableList(new ArrayList<>(moduleList));
+		}
 	}
 
 	public boolean isEnabled(@NotNull final Class<? extends Module> moduleClass) {
@@ -62,9 +68,11 @@ public class ModuleHandler {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Module> @NotNull T getModuleClass(@NotNull final Class<T> moduleClass) {
-		for (Module module : moduleList) {
-			if (moduleClass.isInstance(module)) {
-				return (T) module;
+		synchronized (moduleList) {
+			for (Module module : moduleList) {
+				if (moduleClass.isInstance(module)) {
+					return (T) module;
+				}
 			}
 		}
 		throw new IllegalStateException("Module not registered: " + moduleClass.getName());
@@ -73,9 +81,11 @@ public class ModuleHandler {
 	public @NotNull List<@NotNull Module> getModulesInCategory(
 			@NotNull final ModuleCategory category) {
 		final List<@NotNull Module> modulesInCategory = new ArrayList<>();
-		for (@NotNull final Module module : this.getModules()) {
-			if (module.getCategory().equals(category)) {
-				modulesInCategory.add(module);
+		synchronized (moduleList) {
+			for (@NotNull final Module module : moduleList) {
+				if (module.getCategory().equals(category)) {
+					modulesInCategory.add(module);
+				}
 			}
 		}
 		return modulesInCategory;
@@ -83,9 +93,11 @@ public class ModuleHandler {
 
 	public @NotNull List<@NotNull Module> getEnabledModules() {
 		final List<@NotNull Module> enabled = new ArrayList<>();
-		for (@NotNull final Module module : moduleList) {
-			if (module.isEnabled()) {
-				enabled.add(module);
+		synchronized (moduleList) {
+			for (@NotNull final Module module : moduleList) {
+				if (module.isEnabled()) {
+					enabled.add(module);
+				}
 			}
 		}
 		return enabled;
