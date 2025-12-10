@@ -33,6 +33,7 @@ public class ModuleHandler {
 		this.register(new NoHitDelayModule());
 		// render
 		this.register(new AntiShuffleModule());
+        this.register(new AntiDebuffModule());
 		this.register(new ArrayListModule());
 		// world
 		this.register(new AntiBotModule());
