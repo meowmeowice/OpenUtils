@@ -7,7 +7,6 @@ import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.KeyPressEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
-import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.module.impl.client.*;
 import org.afterlike.openutils.module.impl.minigames.*;
 import org.afterlike.openutils.module.impl.movement.*;
@@ -99,21 +98,6 @@ public class ModuleHandler {
 					enabled.add(module);
 				}
 			}
-		}
-		return enabled;
-	}
-
-	public @NotNull List<@NotNull Module> getEnabledModulesSorted() {
-		final List<@NotNull Module> enabled = getEnabledModules();
-		final ArrayListModule hud = getModuleClass(ArrayListModule.class);
-		final BooleanSetting alphabeticalSetting = hud.getSetting("Alphabetical sort",
-				BooleanSetting.class);
-		final boolean alphabeticalSort = Objects.requireNonNull(alphabeticalSetting).getValue();
-		if (alphabeticalSort) {
-			enabled.sort(Comparator.comparing(Module::getName));
-		} else {
-			enabled.sort((m1, m2) -> mc.fontRendererObj.getStringWidth(m2.getName())
-					- mc.fontRendererObj.getStringWidth(m1.getName()));
 		}
 		return enabled;
 	}

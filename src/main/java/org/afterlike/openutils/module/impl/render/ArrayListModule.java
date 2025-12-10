@@ -2,6 +2,8 @@ package org.afterlike.openutils.module.impl.render;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -51,7 +53,7 @@ public class ArrayListModule extends Module {
 		}
 		int y = hudY;
 		int delta = 0;
-		for (@NotNull final Module module : OpenUtils.get().getModuleHandler().getEnabledModulesSorted()) {
+		for (@NotNull final Module module : getSorted()) {
 			if (module.isEnabled() && module != this) {
 				mc.fontRendererObj.drawString(module.getName(), hudX, y,
 						RenderUtil.getChromaColor(2L, delta), dropShadow.getValue());
@@ -59,6 +61,18 @@ public class ArrayListModule extends Module {
 				delta -= 120;
 			}
 		}
+	}
+
+	private @NotNull List<@NotNull Module> getSorted() {
+		final List<@NotNull Module> enabled = OpenUtils.get().getModuleHandler()
+				.getEnabledModules();
+		if (alphabeticalSort.getValue()) {
+			enabled.sort(Comparator.comparing(Module::getName));
+		} else {
+			enabled.sort((m1, m2) -> mc.fontRendererObj.getStringWidth(m2.getName())
+					- mc.fontRendererObj.getStringWidth(m1.getName()));
+		}
+		return enabled;
 	}
 	class EditorGuiScreen extends GuiScreen {
 		private static final String SAMPLE_TEXT = "This is an-Example-HUD";
