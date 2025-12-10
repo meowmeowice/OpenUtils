@@ -1,7 +1,6 @@
 import dev.architectury.pack200.java.Pack200Adapter
 import net.fabricmc.loom.task.RemapJarTask
 import org.apache.commons.lang3.SystemUtils
-import org.gradle.kotlin.dsl.provideDelegate
 
 // Buildscript based on https://github.com/lineargraph/Forge1.8.9Template (Unlicense)
 plugins {
@@ -15,6 +14,8 @@ plugins {
 
 // Toolchains:
 java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
@@ -102,9 +103,22 @@ tasks {
         }
     }
 
-    jar {
-        archiveClassifier.set("without-deps")
-        destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
+    withType(Jar::class) {
+        archiveBaseName.set("OpenUtils")
+        archiveVersion.set("1.0")
+
+        manifest.attributes.run {
+            this["MixinConfigs"] = "mixins.openutils.json"
+            this["FMLCorePluginContainsFMLMod"] = "true"
+            this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
+            this["ForceLoadAsMod"] = "true"
+        }
+    }
+
+    val remapJar = named<RemapJarTask>("remapJar") {
+        archiveClassifier.set("forge")
+        from(shadowJar)
+        input.set(shadowJar.get().archiveFile)
     }
 
     shadowJar {
@@ -123,10 +137,9 @@ tasks {
         relocateInside("com.google.gson")
     }
 
-    val remapJar by named<RemapJarTask>("remapJar") {
-        archiveClassifier.set("")
-        from(shadowJar)
-        input.set(shadowJar.get().archiveFile)
+    jar {
+        archiveClassifier.set("without-deps")
+        destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
     }
 
     assemble.get().dependsOn(remapJar)
