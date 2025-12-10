@@ -39,6 +39,9 @@ public class ModuleHandler {
 		this.register(new AntiBotModule());
 		// minigames
 		this.register(new ResourceCountModule());
+		this.register(new UpgradeAlertsModule());
+		this.register(new ArmorAlertsModule());
+		this.register(new ItemAlertsModule());
 		// other
 		this.register(new NameHiderModule());
 		// client
