@@ -4,11 +4,13 @@
   "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "minecraft.entity.EntityLivingBaseAccessor",
     "minecraft.network.NetworkManagerMixin",
     "minecraftforge.fml.common.LoadControllerMixin",
     "minecraftforge.fml.common.network.handshake.ModListMixin"
   ],
   "client": [
+    "minecraft.client.MinecraftAccessor",
     "minecraft.client.MinecraftMixin",
     "minecraft.client.multiplayer.PlayerControllerMPAccessor",
     "minecraft.client.renderer.EntityRendererMixin",

@@ -11,7 +11,7 @@ public class NullMoveModule extends Module {
 	private long forwardLastPressTime;
 	private long backwardLastPressTime;
 	public NullMoveModule() {
-		super("NullMove", ModuleCategory.MOVEMENT);
+		super("Null Move", ModuleCategory.MOVEMENT);
 		description = this.registerSetting(new DescriptionSetting(
 				"Prevents opposite movement inputs from canceling each other"));
 	}

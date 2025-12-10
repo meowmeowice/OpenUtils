@@ -5,6 +5,6 @@ import org.afterlike.openutils.module.api.ModuleCategory;
 
 public class AntiBotModule extends Module {
 	public AntiBotModule() {
-		super("AntiBot", ModuleCategory.WORLD);
+		super("Anti Bot", ModuleCategory.WORLD);
 	}
 }

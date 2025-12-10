@@ -5,6 +5,6 @@ import org.afterlike.openutils.module.api.ModuleCategory;
 
 public class AntiShuffleModule extends Module {
 	public AntiShuffleModule() {
-		super("AntiShuffle", ModuleCategory.RENDER);
+		super("Anti Shuffle", ModuleCategory.RENDER);
 	}
 }
