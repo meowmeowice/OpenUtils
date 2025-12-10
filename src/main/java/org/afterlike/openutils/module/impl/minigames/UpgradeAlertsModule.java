@@ -16,6 +16,7 @@ import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
+import org.afterlike.openutils.util.game.BedWarsUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +59,7 @@ public class UpgradeAlertsModule extends Module {
 		if (player == mc.thePlayer)
 			return;
 		// TODO: add teammate check
-		final String teamKey = getTeamKey(player);
+		final String teamKey = BedWarsUtil.getTeamName(player);
 		if (teamKey == null)
 			return;
 		final Set<UpgradeType> upgrades = teamUpgrades.computeIfAbsent(teamKey,
@@ -79,16 +80,6 @@ public class UpgradeAlertsModule extends Module {
 		if (pingSound.getValue()) {
 			mc.thePlayer.playSound("random.orb", 1.0F, 1.0F);
 		}
-	}
-
-	private String getTeamKey(@NotNull final EntityPlayer player) {
-		final String formatted = player.getDisplayName().getFormattedText();
-		if (formatted == null || formatted.length() < 2)
-			return null;
-		if (formatted.charAt(0) == '§') {
-			return formatted.substring(0, 2);
-		}
-		return null;
 	}
 
 	@Override
