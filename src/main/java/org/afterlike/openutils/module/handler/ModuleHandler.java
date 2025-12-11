@@ -45,6 +45,7 @@ public class ModuleHandler {
 		this.register(new BedWarsHudModule());
 		this.register(new ItemAlertsModule());
 		this.register(new LevelHiderModule()); // TODO: impl
+		this.register(new QuickShopModule());
 		this.register(new ResourceCountModule());
 		this.register(new UpgradeAlertsModule());
 		// other
