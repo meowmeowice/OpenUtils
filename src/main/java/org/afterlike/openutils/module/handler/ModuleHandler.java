@@ -28,22 +28,22 @@ public class ModuleHandler {
 		this.register(new SprintModule());
 		// player
 		this.register(new NoBreakDelayModule());
-        this.register(new NoHitDelayModule());
-        this.register(new NoJumpDelayModule());
+		this.register(new NoHitDelayModule());
+		this.register(new NoJumpDelayModule());
 		// render
-        this.register(new AntiDebuffModule());
-        this.register(new AntiShuffleModule());
+		this.register(new AntiDebuffModule());
+		this.register(new AntiShuffleModule());
 		this.register(new ArrayListModule());
 		this.register(new CameraModule());
 		// world
 		this.register(new AntiBotModule());
 		// minigames
-        this.register(new ArmorAlertsModule());
-        this.register(new BedWarsHudModule());
-        this.register(new ItemAlertsModule());
-        this.register(new LevelHiderModule()); // TODO: impl
-        this.register(new ResourceCountModule());
-        this.register(new UpgradeAlertsModule());
+		this.register(new ArmorAlertsModule());
+		this.register(new BedWarsHudModule());
+		this.register(new ItemAlertsModule());
+		this.register(new LevelHiderModule()); // TODO: impl
+		this.register(new ResourceCountModule());
+		this.register(new UpgradeAlertsModule());
 		// other
 		this.register(new NameHiderModule()); // TODO: impl
 		// client
