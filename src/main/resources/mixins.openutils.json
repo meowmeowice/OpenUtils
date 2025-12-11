@@ -16,7 +16,6 @@
     "minecraft.client.renderer.EntityRendererAccessor",
     "minecraft.client.renderer.EntityRendererMixin",
     "minecraft.client.settings.KeyBindingAccessor",
-    "minecraft.client.settings.KeyBindingMixin",
     "minecraft.gui.FontRendererMixin",
     "minecraftforge.client.GuiIngameForgeMixin"
   ]
