@@ -29,10 +29,10 @@ public class ResourceCountModule extends Module {
 		super("Resource Count", ModuleCategory.MINIGAMES);
 		description = this
 				.registerSetting(new DescriptionSetting("Tracks resources in your inventory"));
-		trackIron = this.registerSetting(new BooleanSetting("Track Iron", false));
-		trackGold = this.registerSetting(new BooleanSetting("Track Gold", false));
-		trackDiamonds = this.registerSetting(new BooleanSetting("Track Diamonds", true));
-		trackEmeralds = this.registerSetting(new BooleanSetting("Track Emeralds", true));
+		trackIron = this.registerSetting(new BooleanSetting("Track §fIron", false));
+		trackGold = this.registerSetting(new BooleanSetting("Track §6Gold", false));
+		trackDiamonds = this.registerSetting(new BooleanSetting("Track §bDiamonds", true));
+		trackEmeralds = this.registerSetting(new BooleanSetting("Track §aEmeralds", true));
 		pingSound = this.registerSetting(new BooleanSetting("Ping Sound", false));
 	}
 	private final Map<Item, Integer> lastCounts = new HashMap<>();
@@ -74,7 +74,7 @@ public class ResourceCountModule extends Module {
 			String prefix = gained
 					? EnumChatFormatting.GREEN + "[+] "
 					: EnumChatFormatting.RED + "[-] ";
-			ClientUtil.sendMessage(prefix + getItemDisplayName(item) + EnumChatFormatting.DARK_GRAY
+			ClientUtil.sendMessage(prefix + getItemDisplayName(item) + EnumChatFormatting.GRAY
 					+ " (" + newCount + ")");
 			if (pingSound.getValue()) {
 				mc.thePlayer.playSound("random.orb", 1.0F, 0.8F);
@@ -102,7 +102,7 @@ public class ResourceCountModule extends Module {
 		if (item == Items.diamond)
 			return EnumChatFormatting.AQUA + "Diamond";
 		if (item == Items.emerald)
-			return EnumChatFormatting.DARK_GREEN + "Emerald";
+			return EnumChatFormatting.GREEN + "Emerald";
 		return "Unknown";
 	}
 
