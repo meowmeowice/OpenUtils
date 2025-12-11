@@ -1,6 +1,7 @@
 package org.afterlike.openutils.module.api.hud;
 
 import net.minecraft.client.Minecraft;
+import org.afterlike.openutils.gui.EditorGuiScreen;
 import org.afterlike.openutils.module.api.setting.Setting;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.jetbrains.annotations.NotNull;

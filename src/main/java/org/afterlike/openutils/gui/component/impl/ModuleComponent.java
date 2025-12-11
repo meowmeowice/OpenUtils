@@ -13,7 +13,7 @@ import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
 import org.afterlike.openutils.module.api.setting.impl.NumberSetting;
-import org.afterlike.openutils.module.impl.client.GUIModule;
+import org.afterlike.openutils.module.impl.client.GuiModule;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
@@ -100,7 +100,7 @@ public class ModuleComponent extends Component {
 		float g = 0.0F;
 		float b = 0.0F;
 		final String theme = Objects.requireNonNull(OpenUtils.get().getModuleHandler()
-				.getModuleClass(GUIModule.class).getSetting("Theme", ModeSetting.class)).getValue();
+				.getModuleClass(GuiModule.class).getSetting("Theme", ModeSetting.class)).getValue();
 		if ("raven b1".equalsIgnoreCase(theme)) {
 			a = (h >> 14 & 0xFF) / 255.0F;
 			r = (h >> 5 & 0xFF) / 255.0F;
@@ -139,7 +139,7 @@ public class ModuleComponent extends Component {
 				this.module.isEnabled() ? this.enabledFillColor : -12302777);
 		GL11.glPushMatrix();
 		final String theme = Objects.requireNonNull(OpenUtils.get().getModuleHandler()
-				.getModuleClass(GUIModule.class).getSetting("Theme", ModeSetting.class)).getValue();
+				.getModuleClass(GuiModule.class).getSetting("Theme", ModeSetting.class)).getValue();
 		final boolean themeB3 = theme.equalsIgnoreCase("raven b3");
 		final int buttonColor = themeB3
 				? (this.module.isEnabled() ? this.enabledTextColor : Color.lightGray.getRGB())

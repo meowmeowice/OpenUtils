@@ -3,7 +3,7 @@ package org.afterlike.openutils.gui.component.impl;
 import java.awt.*;
 import org.afterlike.openutils.gui.component.Component;
 import org.afterlike.openutils.module.api.setting.impl.KeybindSetting;
-import org.afterlike.openutils.module.impl.client.GUIModule;
+import org.afterlike.openutils.module.impl.client.GuiModule;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -55,7 +55,7 @@ public class KeybindComponent extends Component {
 		if (this.isBinding) {
 			final KeybindSetting keySetting = this.parent.module.getKeybindSetting();
 			if (keyCode == Keyboard.KEY_ESCAPE) {
-				if (this.parent.module instanceof GUIModule) {
+				if (this.parent.module instanceof GuiModule) {
 					keySetting.setValue(Keyboard.KEY_RSHIFT);
 				} else {
 					keySetting.setValue(Keyboard.KEY_NONE);

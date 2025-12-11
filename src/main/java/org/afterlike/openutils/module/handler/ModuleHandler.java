@@ -48,7 +48,7 @@ public class ModuleHandler {
 		this.register(new NameHiderModule()); // TODO: impl
 		// client
 		this.register(new DebugModule());
-		this.register(new GUIModule());
+		this.register(new GuiModule());
 	}
 
 	private void register(@NotNull final Module module) {

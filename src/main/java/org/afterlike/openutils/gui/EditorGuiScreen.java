@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.api.hud;
+package org.afterlike.openutils.gui;
 
 import java.awt.*;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import org.afterlike.openutils.OpenUtils;
+import org.afterlike.openutils.module.api.hud.HudModule;
+import org.afterlike.openutils.module.api.hud.Position;
 import org.afterlike.openutils.util.game.RenderUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +40,7 @@ public class EditorGuiScreen extends GuiScreen {
 
 	@Override
 	public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-		drawRect(0, 0, this.width, this.height, -1308622848);
+		drawDefaultBackground();
 		final Position position = module.getHudPosition();
 		final int minX = position.getX();
 		final int minY = position.getY();
