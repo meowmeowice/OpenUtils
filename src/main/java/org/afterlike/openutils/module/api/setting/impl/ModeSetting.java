@@ -59,4 +59,9 @@ public class ModeSetting extends Setting<String> {
 	public void previous() {
 		setIndex((index - 1 + modes.size()) % modes.size());
 	}
+
+	@Override
+	public @NotNull Object serializeValue() {
+		return value;
+	}
 }

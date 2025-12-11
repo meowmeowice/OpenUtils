@@ -25,10 +25,6 @@ import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.hud.HudModule;
 import org.afterlike.openutils.module.api.hud.Position;
 import org.afterlike.openutils.module.api.setting.Setting;
-import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
-import org.afterlike.openutils.module.api.setting.impl.KeybindSetting;
-import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
-import org.afterlike.openutils.module.api.setting.impl.NumberSetting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +67,6 @@ public class ConfigHandler {
 			@Nullable final ModuleEntry entry = data.modules.get(module.getName());
 			if (entry == null)
 				continue;
-			module.setKeybind(entry.keybind);
 			if (entry.enabled && !module.isEnabled()) {
 				module.setEnabled(true);
 			} else if (!entry.enabled && module.isEnabled()) {
@@ -84,15 +79,7 @@ public class ConfigHandler {
 				final Object value = settings.get(setting.getName());
 				if (value == null)
 					continue;
-				if (setting instanceof BooleanSetting) {
-					((BooleanSetting) setting).setValue(Boolean.TRUE.equals(value));
-				} else if (setting instanceof NumberSetting) {
-					((NumberSetting) setting).setValue(((Number) value).doubleValue());
-				} else if (setting instanceof ModeSetting) {
-					((ModeSetting) setting).setValue(String.valueOf(value));
-				} else if (setting instanceof KeybindSetting) {
-					((KeybindSetting) setting).setValue(((Number) value).intValue());
-				}
+				setting.deserializeValue(value);
 			}
 			if (module instanceof HudModule && entry.hud != null) {
 				final Position position = ((HudModule) module).getHudPosition();
@@ -125,10 +112,12 @@ public class ConfigHandler {
 		for (final Module module : OpenUtils.get().getModuleHandler().getModules()) {
 			final ModuleEntry entry = new ModuleEntry();
 			entry.enabled = module.isEnabled();
-			entry.keybind = module.getKeybind();
 			entry.settings = new HashMap<>();
 			for (final Setting<?> setting : module.getSettings()) {
-				entry.settings.put(setting.getName(), setting.getValue());
+				final Object serialized = setting.serializeValue();
+				if (serialized != null) {
+					entry.settings.put(setting.getName(), serialized);
+				}
 			}
 			if (module instanceof HudModule) {
 				final Position position = ((HudModule) module).getHudPosition();

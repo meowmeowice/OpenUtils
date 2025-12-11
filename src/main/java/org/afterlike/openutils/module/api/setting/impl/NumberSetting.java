@@ -54,6 +54,11 @@ public class NumberSetting extends Setting<Double> {
 		return String.valueOf(round(value, 2));
 	}
 
+	@Override
+	public @NotNull Object serializeValue() {
+		return value;
+	}
+
 	private static double snap(double value, double step) {
 		if (step <= 0.0)
 			return value;

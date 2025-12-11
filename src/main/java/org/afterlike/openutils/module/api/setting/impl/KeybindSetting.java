@@ -23,4 +23,9 @@ public final class KeybindSetting extends Setting<Integer> {
 	public @NotNull String getDisplayName() {
 		return Keyboard.getKeyName(value);
 	}
+
+	@Override
+	public @NotNull Object serializeValue() {
+		return value;
+	}
 }

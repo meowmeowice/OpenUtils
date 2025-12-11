@@ -30,4 +30,9 @@ public class BooleanSetting extends Setting<Boolean> {
 	public void disable() {
 		this.value = false;
 	}
+
+	@Override
+	public @NotNull Object serializeValue() {
+		return value;
+	}
 }

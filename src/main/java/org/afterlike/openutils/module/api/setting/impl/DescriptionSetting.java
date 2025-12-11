@@ -19,4 +19,9 @@ public class DescriptionSetting extends Setting<String> {
 	public void setValue(@NotNull String value) {
 		super.setValue(value);
 	}
+
+	@Override
+	public @Nullable Object serializeValue() {
+		return null;
+	}
 }
