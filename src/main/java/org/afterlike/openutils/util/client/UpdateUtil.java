@@ -30,10 +30,11 @@ public class UpdateUtil {
 			conn.setReadTimeout(5000);
 			try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
 				JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
-                if (!json.has("tag_name")) return;
+				if (!json.has("tag_name"))
+					return;
 				latest = json.get("tag_name").getAsString();
 				String current = OpenUtils.get().getVersion();
-                OpenUtils.get().setOutdated(!current.equals("dev") && !current.equals(latest));
+				OpenUtils.get().setOutdated(!current.equals("dev") && !current.equals(latest));
 				logger.info("Successfully checked latest version: {}", latest);
 			}
 		} catch (Throwable e) {
