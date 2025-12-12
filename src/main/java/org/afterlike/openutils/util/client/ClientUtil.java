@@ -8,11 +8,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class ClientUtil {
 	private static final @NotNull Minecraft mc = Minecraft.getMinecraft();
-	private static final @NotNull String prefix = "&8&l» &r";
+	private static final @NotNull String prefix = "§8§l» §r";
 	public static void sendMessage(@NotNull final String message) {
 		if (notNull()) {
 			mc.thePlayer.addChatMessage(
 					new ChatComponentText(TextUtil.replaceColorCodes(prefix + message)));
+		}
+	}
+
+	public static void sendChatComponent(@NotNull final ChatComponentText message) {
+		if (notNull()) {
+			mc.thePlayer.addChatMessage(message);
 		}
 	}
 

@@ -1,19 +1,29 @@
 package org.afterlike.openutils.platform.mixin.minecraft.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.event.HoverEvent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.api.EventPhase;
 import org.afterlike.openutils.event.impl.*;
+import org.afterlike.openutils.util.client.ClientUtil;
+import org.afterlike.openutils.util.client.UpdateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
+	@Unique boolean ou$pendingUpdateNotification;
+	@Unique String ou$url = "https://github.com/polariscli/OpenUtils/releases/latest";
 	@Inject(method = "startGame", at = @At("HEAD"))
 	private void startGame$head(final @NotNull CallbackInfo callbackInfo) {
 		OpenUtils.get().initialize();
@@ -27,6 +37,17 @@ public abstract class MinecraftMixin {
 	@Inject(method = "updateFramebufferSize", at = @At("RETURN"))
 	private void ou$updateFramebufferSize(@NotNull final CallbackInfo ci) {
 		OpenUtils.get().getEventBus().post(new ResizeWindowEvent());
+	}
+
+	@Inject(method = "loadWorld*", at = @At("HEAD"))
+	private void onWorldLoad(WorldClient worldClient, CallbackInfo ci) {
+		if (worldClient != null) {
+			OpenUtils.get().getEventBus().post(new WorldLoadEvent(worldClient));
+		}
+		if (UpdateUtil.getLatest() != null && OpenUtils.get().isOutdated()
+				&& !OpenUtils.get().isNotified()) {
+			ou$pendingUpdateNotification = true;
+		}
 	}
 
 	@Inject(method = "runTick", at = @At(value = "INVOKE",
@@ -54,6 +75,22 @@ public abstract class MinecraftMixin {
 	@Inject(method = "runTick", at = @At("HEAD"))
 	private void ou$runTick$head(@NotNull final CallbackInfo ci) {
 		OpenUtils.get().getEventBus().post(new GameTickEvent(EventPhase.PRE));
+		if (ou$pendingUpdateNotification && ClientUtil.notNull()) {
+			ClientUtil.sendMessage("&fUpdate available: &aOpenUtils " + UpdateUtil.getLatest());
+			ClientUtil.sendMessage(
+					"&7You are currently on: &eOpenUtils " + OpenUtils.get().getVersion());
+			ChatComponentText component = new ChatComponentText(
+					ClientUtil.getPrefix() + "§b§n" + ou$url);
+			component.getChatStyle()
+					.setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+							"https://github.com/polariscli/OpenUtils/releases/latest"))
+					.setChatHoverEvent(
+							new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(
+									EnumChatFormatting.GREEN + "Click to view latest release ↗")));
+			ClientUtil.sendChatComponent(component);
+			OpenUtils.get().setNotified(true);
+			ou$pendingUpdateNotification = false;
+		}
 	}
 
 	@Inject(method = "runTick", at = @At("RETURN"))

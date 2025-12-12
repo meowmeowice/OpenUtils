@@ -9,6 +9,7 @@ import org.afterlike.openutils.config.handler.ConfigHandler;
 import org.afterlike.openutils.event.api.EventBus;
 import org.afterlike.openutils.gui.ClickGuiScreen;
 import org.afterlike.openutils.module.handler.ModuleHandler;
+import org.afterlike.openutils.util.client.UpdateUtil;
 import org.afterlike.openutils.util.lang.ReflectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,9 @@ public class OpenUtils {
 	private static final @NotNull Logger logger = LogManager.getLogger(OpenUtils.class);
 	private static final @Nullable OpenUtils instance = new OpenUtils();
 	private static final @NotNull String VERSION = org.afterlike.openutils.BuildConstants.VERSION;
+	// check for updates
+	private static volatile boolean outdated = false;
+	private static volatile boolean notified = false;
 	private final @NotNull ModuleHandler moduleHandler;
 	private final @NotNull ConfigHandler configHandler;
 	private final @NotNull EventBus eventBus;
@@ -47,6 +51,7 @@ public class OpenUtils {
 			builder.addAll(list);
 			ReflectionUtil.setField(commonHandler, field, builder.build());
 		}
+		UpdateUtil.checkAsync();
 	}
 
 	public @NotNull EventBus getEventBus() {
@@ -66,6 +71,26 @@ public class OpenUtils {
 			clickGuiScreen = new ClickGuiScreen();
 		}
 		return clickGuiScreen;
+	}
+
+	public @NotNull String getVersion() {
+		return VERSION;
+	}
+
+	public void setOutdated(boolean isOutdated) {
+		outdated = isOutdated;
+	}
+
+	public boolean isOutdated() {
+		return outdated;
+	}
+
+	public void setNotified(boolean isNotified) {
+		notified = isNotified;
+	}
+
+	public boolean isNotified() {
+		return notified;
 	}
 
 	public static @NotNull OpenUtils get() {
