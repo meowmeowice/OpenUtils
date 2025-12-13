@@ -48,9 +48,11 @@ public class ModuleHandler {
 		this.register(new NickBotModule()); // TODO: impl
 		// bed wars
 		this.register(new ArmorAlertsModule());
+		this.register(new FinalKillsHudModule());
 		this.register(new ItemAlertsModule());
 		this.register(new QuickShopModule());
 		this.register(new ResourceCountModule());
+		this.register(new TimersHudModule());
 		this.register(new UpgradeAlertsModule());
 		this.register(new UpgradesHudModule());
 		// client

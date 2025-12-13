@@ -1,0 +1,297 @@
+package org.afterlike.openutils.module.impl.bedwars;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.afterlike.openutils.event.api.EventPhase;
+import org.afterlike.openutils.event.handler.EventHandler;
+import org.afterlike.openutils.event.impl.GameTickEvent;
+import org.afterlike.openutils.event.impl.RenderOverlayEvent;
+import org.afterlike.openutils.module.api.Module;
+import org.afterlike.openutils.module.api.ModuleCategory;
+import org.afterlike.openutils.module.api.hud.HudModule;
+import org.afterlike.openutils.module.api.hud.Position;
+import org.afterlike.openutils.module.api.setting.Setting;
+import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
+import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
+import org.afterlike.openutils.util.client.ClientUtil;
+import org.afterlike.openutils.util.client.TextUtil;
+import org.afterlike.openutils.util.game.GameModeUtil;
+import org.afterlike.openutils.util.game.RenderUtil;
+import org.afterlike.openutils.util.game.WorldUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class TimersHudModule extends Module implements HudModule {
+	private final Position position = new Position(5, 150);
+	private final DescriptionSetting disclaimer;
+	private final BooleanSetting editPosition;
+	private final BooleanSetting dropShadow;
+	private boolean inGame = false;
+	private String mode = "";
+	private int tickCounter = 0;
+	private static final int EMERALD_FIRST = 31;
+	private static final int DIAMOND_FIRST = 1;
+	private static final List<Integer> DIAMOND_UPGRADES = Arrays.asList(6 * 60, 18 * 60);
+	private static final List<Integer> EMERALD_UPGRADES = Arrays.asList(12 * 60, 24 * 60);
+	private static final List<StageEvent> STAGE_EVENTS = Arrays.asList(
+			new StageEvent("Diamond II", 6 * 60), new StageEvent("Emerald II", 12 * 60),
+			new StageEvent("Diamond III", 18 * 60), new StageEvent("Emerald III", 24 * 60),
+			new StageEvent("Bed gone", 30 * 60), new StageEvent("Sudden Death", 40 * 60),
+			new StageEvent("Game End", 50 * 60));
+	private int emeraldCount = 0;
+	private int emeraldNext = 0;
+	private int diamondCount = 0;
+	private int diamondNext = 0;
+	private static final Pattern TIMER_PATTERN = Pattern.compile("(\\d{1,2}):(\\d{2})");
+	private static class StageEvent {
+		final String name;
+		final int time;
+		StageEvent(final String name, final int time) {
+			this.name = name;
+			this.time = time;
+		}
+	}
+	public TimersHudModule() {
+		super("Timers HUD", ModuleCategory.BEDWARS);
+		disclaimer = this
+				.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
+		editPosition = this.registerSetting(new BooleanSetting("Edit position", false));
+		dropShadow = this.registerSetting(new BooleanSetting("Drop shadow", true));
+	}
+
+	@EventHandler
+	private void onTick(final @NotNull GameTickEvent event) {
+		if (event.getPhase() != EventPhase.POST)
+			return;
+		final int status = GameModeUtil.getBedWarsStatus();
+		if (status == 3) {
+			if (!inGame) {
+				inGame = true;
+				tickCounter = 0;
+				detectMode();
+				updateFromSidebar();
+			} else {
+				tickCounter++;
+				if (tickCounter % 20 == 0) {
+					updateFromSidebar();
+				}
+			}
+		} else {
+			if (inGame) {
+				resetAll();
+			}
+		}
+	}
+
+	@EventHandler
+	private void onRender(@NotNull final RenderOverlayEvent event) {
+		if (!ClientUtil.notNull())
+			return;
+		if (mc.gameSettings.showDebugInfo)
+			return;
+		if (!inGame)
+			return;
+		int y = position.getY();
+		int delta = 0;
+		final String emeraldLine = "§aEmeralds (§7" + emeraldCount + "§a): §f" + emeraldNext;
+		mc.fontRendererObj.drawString(emeraldLine, position.getX(), y,
+				RenderUtil.getChromaColor(2L, delta), useHudDropShadow());
+		y += mc.fontRendererObj.FONT_HEIGHT + 2;
+		delta -= 90;
+		final String diamondLine = "§bDiamonds (§7" + diamondCount + "§b): §f" + diamondNext;
+		mc.fontRendererObj.drawString(diamondLine, position.getX(), y,
+				RenderUtil.getChromaColor(2L, delta), useHudDropShadow());
+	}
+
+	@Override
+	protected void onEnable() {
+		super.onEnable();
+		resetAll();
+	}
+
+	@Override
+	protected void onDisable() {
+		resetAll();
+		super.onDisable();
+	}
+
+	@Override
+	public void onSettingChanged(@Nullable final Setting<?> setting) {
+		handleHudSettingChanged(setting);
+		super.onSettingChanged(setting);
+	}
+
+	@Override
+	public @NotNull Position getHudPosition() {
+		return position;
+	}
+
+	@Override
+	public @NotNull BooleanSetting getHudEditSetting() {
+		return editPosition;
+	}
+
+	@Override
+	public @NotNull String getHudPlaceholderText() {
+		return "Emeralds:-Diamonds:";
+	}
+
+	@Override
+	public boolean useHudDropShadow() {
+		return dropShadow.getValue();
+	}
+
+	private void detectMode() {
+		final List<String> scoreboard = WorldUtil.getScoreboard();
+		boolean hasPink = false;
+		for (final String line : scoreboard) {
+			if (TextUtil.stripColorCodes(line).contains("Pink:")) {
+				hasPink = true;
+				break;
+			}
+		}
+		mode = hasPink ? "eight" : "four";
+	}
+
+	private void resetAll() {
+		inGame = false;
+		mode = "";
+		tickCounter = 0;
+		emeraldCount = 0;
+		emeraldNext = 0;
+		diamondCount = 0;
+		diamondNext = 0;
+	}
+
+	private int getEmeraldInterval(final int tier) {
+		if ("eight".equals(mode)) {
+			switch (tier) {
+				case 1 :
+					return 65;
+				case 2 :
+					return 50;
+				case 3 :
+					return 35;
+				default :
+					return 65;
+			}
+		} else if ("four".equals(mode)) {
+			switch (tier) {
+				case 1 :
+					return 55;
+				case 2 :
+					return 40;
+				case 3 :
+					return 27;
+				default :
+					return 55;
+			}
+		}
+		return 65;
+	}
+
+	private int getDiamondInterval(final int tier) {
+		switch (tier) {
+			case 1 :
+				return 30;
+			case 2 :
+				return 23;
+			case 3 :
+				return 12;
+			default :
+				return 30;
+		}
+	}
+
+	private int getTier(final int time, final @NotNull List<Integer> upgrades) {
+		if (upgrades.size() > 1 && time >= upgrades.get(1)) {
+			return 3;
+		}
+		if (!upgrades.isEmpty() && time >= upgrades.get(0)) {
+			return 2;
+		}
+		return 1;
+	}
+
+	private @NotNull SpawnResult calculateSpawns(final int time, final int first,
+			final @NotNull List<Integer> upgrades, final @NotNull IntervalFunction intervalGen) {
+		if (time < first) {
+			return new SpawnResult(0, first - time);
+		}
+		int count = 1;
+		int last = first;
+		int idxUp = 0;
+		int nextUp = upgrades.isEmpty() ? Integer.MAX_VALUE : upgrades.get(0);
+		while (true) {
+			final int tier = getTier(last, upgrades);
+			final int interval = intervalGen.getInterval(tier);
+			final int next = last + interval;
+			if (nextUp <= time && nextUp < next) {
+				count++;
+				last = nextUp;
+				idxUp++;
+				nextUp = idxUp < upgrades.size() ? upgrades.get(idxUp) : Integer.MAX_VALUE;
+				continue;
+			}
+			if (next > time) {
+				return new SpawnResult(count, Math.max(1, next - time));
+			}
+			count++;
+			last = next;
+		}
+	}
+
+	private void updateFromSidebar() {
+		final List<String> sidebar = WorldUtil.getScoreboard();
+		if (sidebar.size() < 4)
+			return;
+		String raw = TextUtil.stripColorCodes(sidebar.get(3));
+		raw = raw.replaceAll("§[0-9a-fk-or]", "").trim();
+		final Matcher matcher = TIMER_PATTERN.matcher(raw);
+		if (!matcher.find())
+			return;
+		final String minStr = matcher.group(1);
+		final String secStr = matcher.group(2);
+		int min;
+		int sec;
+		try {
+			min = Integer.parseInt(minStr);
+			sec = Integer.parseInt(secStr);
+		} catch (final NumberFormatException e) {
+			return;
+		}
+		final int secondsLeft = min * 60 + sec;
+		final String eventName = raw.substring(0, raw.indexOf("in")).trim();
+		StageEvent scheduled = null;
+		for (final StageEvent event : STAGE_EVENTS) {
+			if (event.name.equalsIgnoreCase(eventName)) {
+				scheduled = event;
+				break;
+			}
+		}
+		if (scheduled == null)
+			return;
+		final int elapsed = scheduled.time - secondsLeft;
+		final SpawnResult emeraldResult = calculateSpawns(elapsed + 1, EMERALD_FIRST,
+				EMERALD_UPGRADES, this::getEmeraldInterval);
+		emeraldCount = emeraldResult.count;
+		emeraldNext = emeraldResult.next;
+		final SpawnResult diamondResult = calculateSpawns(elapsed + 1, DIAMOND_FIRST,
+				DIAMOND_UPGRADES, this::getDiamondInterval);
+		diamondCount = diamondResult.count;
+		diamondNext = diamondResult.next;
+	}
+	private interface IntervalFunction {
+		int getInterval(int tier);
+	}
+	private static class SpawnResult {
+		final int count;
+		final int next;
+		SpawnResult(final int count, final int next) {
+			this.count = count;
+			this.next = next;
+		}
+	}
+}

@@ -8,6 +8,7 @@
     "minecraft.entity.EntityLivingBaseAccessor",
     "minecraft.entity.EntityLivingBaseMixin",
     "minecraft.network.NetworkManagerMixin",
+    "minecraft.world.storage.WorldInfoMixin",
     "minecraftforge.fml.common.network.handshake.ModListMixin"
   ],
   "client": [
@@ -17,6 +18,7 @@
     "minecraft.client.multiplayer.PlayerControllerMPAccessor",
     "minecraft.client.renderer.EntityRendererAccessor",
     "minecraft.client.renderer.EntityRendererMixin",
+    "minecraft.client.renderer.RenderGlobalMixin",
     "minecraft.client.renderer.entity.RenderFishMixin",
     "minecraft.client.settings.KeyBindingAccessor",
     "minecraft.gui.FontRendererMixin",

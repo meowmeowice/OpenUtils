@@ -1,7 +1,11 @@
 package org.afterlike.openutils.module.impl.bedwars;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.afterlike.openutils.event.api.EventPhase;
 import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.GameTickEvent;
@@ -21,28 +25,24 @@ import org.afterlike.openutils.util.game.RenderUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class UpgradesHudModule extends Module implements HudModule {
-	private final Position position = new Position(5, 100);
+public class FinalKillsHudModule extends Module implements HudModule {
+	private final Position position = new Position(5, 50);
 	private final DescriptionSetting disclaimer;
 	private final BooleanSetting editPosition;
 	private final BooleanSetting dropShadow;
-	private final BooleanSetting chroma;
-	private final BooleanSetting showTrap;
-	private final BooleanSetting showSharp;
-	private final BooleanSetting showProt;
-	private final List<String> trapQueue = new ArrayList<>();
-	private final List<String> protUpgrades = new ArrayList<>();
-	private final List<String> sharpUpgrades = new ArrayList<>();
-	public UpgradesHudModule() {
-		super("Upgrades HUD", ModuleCategory.BEDWARS);
+	private final BooleanSetting showVoidKills;
+	private final Map<String, Integer> finalKills = new HashMap<>();
+	private static final String VOID_KEY = "§8Void";
+	// TODO: implement teammates only filter
+	private static final Pattern NAME_CHUNK_PATTERN = Pattern
+			.compile("§([0-9a-fk-or])([A-Za-z0-9_]+)");
+	public FinalKillsHudModule() {
+		super("Final Kills HUD", ModuleCategory.BEDWARS);
 		disclaimer = this
 				.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
 		editPosition = this.registerSetting(new BooleanSetting("Edit position", false));
 		dropShadow = this.registerSetting(new BooleanSetting("Drop shadow", true));
-		chroma = this.registerSetting(new BooleanSetting("Chroma", false));
-		showTrap = this.registerSetting(new BooleanSetting("Show trap", true));
-		showSharp = this.registerSetting(new BooleanSetting("Show sharpness", true));
-		showProt = this.registerSetting(new BooleanSetting("Show protection", true));
+		showVoidKills = this.registerSetting(new BooleanSetting("Show void kills", true));
 	}
 
 	@EventHandler
@@ -51,31 +51,33 @@ public class UpgradesHudModule extends Module implements HudModule {
 			return;
 		if (GameModeUtil.getBedWarsStatus() != 3)
 			return;
-		final String message = TextUtil.stripColorCodes(event.getMessage());
-		if (message.contains(":"))
+		final String message = event.getMessage();
+		if (!message.contains("§b§lFINAL KILL!§r"))
 			return;
-		final String purchasedPattern = message
-				.substring(message.indexOf("purchased") + "purchased".length());
-		if (message.contains("purchased") && message.contains("Trap")) {
-			final String trap = purchasedPattern.replace("Trap", "").trim();
-			trapQueue.add(trap);
-		} else if (message.contains("purchased") && message.contains("Reinforced Armor")) {
-			protUpgrades.clear();
-			final String armor = purchasedPattern.replace("Reinforced Armor", "").trim();
-			protUpgrades.add(armor);
-		} else if (message.contains("purchased") && message.contains("Sharpened Swords")) {
-			sharpUpgrades.clear();
-			final String sharp = purchasedPattern.replace("Sharpened Swords", "").trim();
-			sharpUpgrades.add(sharp);
-		} else if (message.contains("Trap was set off!")) {
-			if (!trapQueue.isEmpty()) {
-				trapQueue.remove(0);
-			}
-		} else if (message.contains("Trap from the queue!")) {
-			if (!trapQueue.isEmpty()) {
-				trapQueue.remove(0);
-			}
+		final String body = message.substring(0, message.indexOf("§b§lFINAL KILL!§r")).trim();
+		final Matcher matcher = NAME_CHUNK_PATTERN.matcher(body);
+		String lastColorCode = null;
+		String lastPlayerName = null;
+		while (matcher.find()) {
+			lastColorCode = "§" + matcher.group(1);
+			lastPlayerName = matcher.group(2);
 		}
+		if (lastColorCode == null || lastPlayerName == null) {
+			ClientUtil.sendDebugMessage("no name chunks found in: " + body);
+			return;
+		}
+		final String unformattedName = TextUtil.stripColorCodes(lastColorCode + lastPlayerName);
+		if (unformattedName.equalsIgnoreCase("void")) {
+			if (showVoidKills.getValue()) {
+				finalKills.put(VOID_KEY, finalKills.getOrDefault(VOID_KEY, 0) + 1);
+				ClientUtil.sendDebugMessage("counted void kill: " + finalKills.get(VOID_KEY));
+			}
+			return;
+		}
+		final String displayName = lastColorCode + lastPlayerName;
+		finalKills.put(displayName, finalKills.getOrDefault(displayName, 0) + 1);
+		ClientUtil.sendDebugMessage(
+				"counted kill for " + displayName + ": " + finalKills.get(displayName));
 	}
 
 	@EventHandler
@@ -86,9 +88,17 @@ public class UpgradesHudModule extends Module implements HudModule {
 			return;
 		if (GameModeUtil.getBedWarsStatus() != 3)
 			return;
+		if (finalKills.isEmpty())
+			return;
 		int y = position.getY();
 		int delta = 0;
-		for (final String line : buildLines()) {
+		final List<Map.Entry<String, Integer>> sortedKills = new ArrayList<>(finalKills.entrySet());
+		sortedKills.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+		for (final Map.Entry<String, Integer> entry : sortedKills) {
+			if (entry.getKey().equals(VOID_KEY) && !showVoidKills.getValue())
+				continue;
+			final String displayName = entry.getKey().equals(VOID_KEY) ? VOID_KEY : entry.getKey();
+			final String line = "§r" + displayName + ": §f" + entry.getValue();
 			mc.fontRendererObj.drawString(line, position.getX(), y,
 					RenderUtil.getChromaColor(2L, delta), useHudDropShadow());
 			y += mc.fontRendererObj.FONT_HEIGHT + 2;
@@ -105,47 +115,20 @@ public class UpgradesHudModule extends Module implements HudModule {
 		}
 	}
 
-	private @NotNull List<@NotNull String> buildLines() {
-		final List<String> lines = new ArrayList<>();
-		final String color = chroma.getValue() ? "§r" : "§r§f";
-		if (showTrap.getValue()) {
-			if (trapQueue.isEmpty()) {
-				lines.add(color + "Trap: §cNone");
-			} else {
-				lines.add(color + "Trap: §a" + trapQueue.get(0));
-			}
-		}
-		if (showSharp.getValue()) {
-			if (sharpUpgrades.isEmpty()) {
-				lines.add(color + "Sharp: §cNone");
-			} else {
-				lines.add(color + "Sharp: §aI");
-			}
-		}
-		if (showProt.getValue()) {
-			if (protUpgrades.isEmpty()) {
-				lines.add(color + "Prot: §cNone");
-			} else {
-				lines.add(color + "Prot: §a" + protUpgrades.get(0));
-			}
-		}
-		return lines;
-	}
-
 	private void resetTracking() {
-		trapQueue.clear();
-		protUpgrades.clear();
-		sharpUpgrades.clear();
+		finalKills.clear();
 	}
 
 	@Override
 	protected void onEnable() {
+		super.onEnable();
 		resetTracking();
 	}
 
 	@Override
 	protected void onDisable() {
 		resetTracking();
+		super.onDisable();
 	}
 
 	@Override
@@ -166,7 +149,7 @@ public class UpgradesHudModule extends Module implements HudModule {
 
 	@Override
 	public @NotNull String getHudPlaceholderText() {
-		return "Trap:-Sharp:-Prot:";
+		return "Player:-Player:-Player:";
 	}
 
 	@Override
