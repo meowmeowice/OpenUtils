@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -15,12 +15,14 @@ import org.afterlike.openutils.event.impl.ReceivePacketEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
+import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.afterlike.openutils.util.game.BedWarsUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class UpgradeAlertsModule extends Module {
+	private final DescriptionSetting desc;
 	private final BooleanSetting pingSound;
 	private final Map<String, Set<UpgradeType>> teamUpgrades;
 	private enum UpgradeType {
@@ -35,7 +37,9 @@ public class UpgradeAlertsModule extends Module {
 		}
 	}
 	public UpgradeAlertsModule() {
-		super("Upgrade Alerts", ModuleCategory.MINIGAMES);
+		super("Upgrade Alerts", ModuleCategory.BEDWARS);
+		desc = this.registerSetting(
+				new DescriptionSetting("Alerts you when teams purchase diamond upgrades"));
 		pingSound = this.registerSetting(new BooleanSetting("Ping Sound", true));
 		teamUpgrades = new HashMap<>();
 	}

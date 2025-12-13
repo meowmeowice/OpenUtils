@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.player;
+package org.afterlike.openutils.module.impl.movement;
 
 import org.afterlike.openutils.event.api.EventPhase;
 import org.afterlike.openutils.event.handler.EventHandler;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class NoJumpDelayModule extends Module {
 	private final BooleanSetting onlyWhileMoving;
 	public NoJumpDelayModule() {
-		super("No Jump Delay", ModuleCategory.PLAYER); // maybe move to movement?
+		super("No Jump Delay", ModuleCategory.MOVEMENT);
 		onlyWhileMoving = this.registerSetting(new BooleanSetting("Only while moving", false));
 	}
 

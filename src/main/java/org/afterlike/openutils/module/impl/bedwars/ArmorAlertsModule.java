@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -14,12 +14,14 @@ import org.afterlike.openutils.event.impl.ReceivePacketEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
+import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ArmorAlertsModule extends Module {
+	private final DescriptionSetting desc;
 	private final ModeSetting pingSound;
 	private final BooleanSetting detectChainmail;
 	private final BooleanSetting detectIron;
@@ -29,7 +31,9 @@ public class ArmorAlertsModule extends Module {
 		NONE, LEATHER, CHAINMAIL, IRON, DIAMOND
 	}
 	public ArmorAlertsModule() {
-		super("Armor Alerts", ModuleCategory.MINIGAMES);
+		super("Armor Alerts", ModuleCategory.BEDWARS);
+		desc = this
+				.registerSetting(new DescriptionSetting("Alerts you when players purchase armor"));
 		pingSound = this.registerSetting(
 				new ModeSetting("Ping Sound", "All", "None", "Diamond Only", "All"));
 		detectChainmail = this.registerSetting(new BooleanSetting("§fChainmail Armor", true));

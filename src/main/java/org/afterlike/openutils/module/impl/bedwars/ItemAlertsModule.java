@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import org.afterlike.openutils.event.impl.ReceivePacketEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
+import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
@@ -31,6 +32,7 @@ public class ItemAlertsModule extends Module {
 	private final Item potionJump, potionSpeed, potionInvis, machineGunBow, charlieUnicorn,
 			iceBridge, sleepingDust, devastatorBow, miracleStars, bridgeZapper, shuriken,
 			blockShuffler, unstableTeleport, snowman, popupTower, dreamDefender;
+	private final DescriptionSetting desc;
 	private final ModeSetting pingSound;
 	private final BooleanSetting detectIronSword, detectDiamondSword, detectFireball,
 			detectKnockbackStick, detectBow, detectTnt, detectObsidian, detectPearl,
@@ -41,7 +43,7 @@ public class ItemAlertsModule extends Module {
 	private final Map<String, AlertState> alerts;
 	private final List<ItemRule> rules;
 	public ItemAlertsModule() {
-		super("Item Alerts", ModuleCategory.MINIGAMES);
+		super("Item Alerts", ModuleCategory.BEDWARS);
 		potionJump = new Item();
 		potionSpeed = new Item();
 		potionInvis = new Item();
@@ -58,6 +60,8 @@ public class ItemAlertsModule extends Module {
 		snowman = new Item();
 		popupTower = new Item();
 		dreamDefender = new Item();
+		desc = this
+				.registerSetting(new DescriptionSetting("Alerts you when players purchase items"));
 		pingSound = this
 				.registerSetting(new ModeSetting("Ping Sound", "All", "None", "Important", "All"));
 		detectIronSword = this.registerSetting(new BooleanSetting("§fIron Sword", true));

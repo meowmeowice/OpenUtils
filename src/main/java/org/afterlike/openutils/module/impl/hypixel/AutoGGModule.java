@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.hypixel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class AutoGGModule extends Module {
 		}
 	}
 	public AutoGGModule() {
-		super("Auto GG", ModuleCategory.MINIGAMES);
+		super("Auto GG", ModuleCategory.HYPIXEL);
 	}
 
 	@EventHandler

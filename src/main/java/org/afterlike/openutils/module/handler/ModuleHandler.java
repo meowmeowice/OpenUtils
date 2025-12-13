@@ -7,10 +7,10 @@ import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.KeyPressEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
+import org.afterlike.openutils.module.impl.bedwars.*;
 import org.afterlike.openutils.module.impl.client.*;
-import org.afterlike.openutils.module.impl.minigames.*;
+import org.afterlike.openutils.module.impl.hypixel.*;
 import org.afterlike.openutils.module.impl.movement.*;
-import org.afterlike.openutils.module.impl.other.*;
 import org.afterlike.openutils.module.impl.player.*;
 import org.afterlike.openutils.module.impl.render.*;
 import org.afterlike.openutils.module.impl.world.*;
@@ -24,32 +24,35 @@ public class ModuleHandler {
 	public void initialize() {
 		OpenUtils.get().getEventBus().subscribe(this);
 		// movement
+		this.register(new NoJumpDelayModule());
 		this.register(new NullMoveModule());
 		this.register(new SprintModule());
 		// player
 		this.register(new NoBreakDelayModule());
 		this.register(new NoHitDelayModule());
-		this.register(new NoJumpDelayModule());
 		// render
 		this.register(new AntiDebuffModule());
 		this.register(new AntiShuffleModule());
 		this.register(new ArrayListModule());
 		this.register(new CameraModule());
 		this.register(new CapeModule());
+		this.register(new DamageTagsModule());
+		this.register(new NameHiderModule()); // TODO: impl
 		this.register(new ThickRodsModule());
 		// world
-		this.register(new AntiBotModule());
-		// minigames
-		this.register(new ArmorAlertsModule());
+		this.register(new TimeChangerModule()); // TODO: impl
+		this.register(new WeatherModule()); // TODO: impl
+		// hypixel
 		this.register(new AutoGGModule());
-		this.register(new BedWarsHudModule());
+		this.register(new DenickerModule());
+		this.register(new NickBotModule()); // TODO: impl
+		// bed wars
+		this.register(new ArmorAlertsModule());
 		this.register(new ItemAlertsModule());
-		this.register(new LevelHiderModule()); // TODO: impl
 		this.register(new QuickShopModule());
 		this.register(new ResourceCountModule());
 		this.register(new UpgradeAlertsModule());
-		// other
-		this.register(new NameHiderModule()); // TODO: impl
+		this.register(new UpgradesHudModule());
 		// client
 		this.register(new DebugModule());
 		this.register(new GuiModule());

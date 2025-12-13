@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.afterlike.openutils.util.game.RenderUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BedWarsHudModule extends Module implements HudModule {
+public class UpgradesHudModule extends Module implements HudModule {
 	private final Position position = new Position(5, 50);
 	private final DescriptionSetting disclaimer;
 	private final BooleanSetting editPosition;
@@ -33,8 +33,8 @@ public class BedWarsHudModule extends Module implements HudModule {
 	private final List<String> trapQueue = new ArrayList<>();
 	private final List<String> protUpgrades = new ArrayList<>();
 	private final List<String> sharpUpgrades = new ArrayList<>();
-	public BedWarsHudModule() {
-		super("Bed Wars HUD", ModuleCategory.MINIGAMES);
+	public UpgradesHudModule() {
+		super("Upgrades HUD", ModuleCategory.BEDWARS);
 		disclaimer = this
 				.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
 		editPosition = this.registerSetting(new BooleanSetting("Edit position", false));

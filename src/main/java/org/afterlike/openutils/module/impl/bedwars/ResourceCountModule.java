@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class ResourceCountModule extends Module {
 	private final BooleanSetting trackEmeralds;
 	private final BooleanSetting pingSound;
 	public ResourceCountModule() {
-		super("Resource Count", ModuleCategory.MINIGAMES);
+		super("Resource Count", ModuleCategory.BEDWARS);
 		description = this
 				.registerSetting(new DescriptionSetting("Tracks resources in your inventory"));
 		trackIron = this.registerSetting(new BooleanSetting("Track §fIron", false));

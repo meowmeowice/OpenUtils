@@ -1,4 +1,4 @@
-package org.afterlike.openutils.module.impl.minigames;
+package org.afterlike.openutils.module.impl.bedwars;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,9 +19,15 @@ import org.jetbrains.annotations.NotNull;
 public class QuickShopModule extends Module {
 	private final @NotNull DescriptionSetting desc;
 	public QuickShopModule() {
-		super("Quick Shop", ModuleCategory.MINIGAMES);
+		super("Quick Shop", ModuleCategory.BEDWARS);
 		desc = this.registerSetting(new DescriptionSetting(
-				"Converts your left-clicks to middle-clicks. Hypixel language must be ENGLISH!"));
+				"Converts your left-clicks to middle-clicks. Hypixel language must be ENGLISH!")); // todo:
+																									// check
+																									// if
+																									// languages
+																									// change
+																									// gui
+																									// title
 	}
 	private static final Set<String> SHOP_TITLES = new HashSet<>(
 			Arrays.asList("quick buy", "upgrades & traps", "blocks", "melee", "armor", "tools",
