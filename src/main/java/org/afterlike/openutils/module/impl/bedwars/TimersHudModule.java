@@ -243,7 +243,7 @@ public class TimersHudModule extends Module implements HudModule {
 		int nextUp = upgrades.isEmpty() ? Integer.MAX_VALUE : upgrades.get(0);
 		while (true) {
 			final int tier = getTier(last, upgrades);
-			final int interval = intervalGen.applyAsInt(tier);;
+			final int interval = intervalGen.applyAsInt(tier);
 			final int next = last + interval;
 			if (nextUp <= time && nextUp < next) {
 				count++;
