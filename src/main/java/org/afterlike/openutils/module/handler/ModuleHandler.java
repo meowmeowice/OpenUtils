@@ -46,7 +46,7 @@ public class ModuleHandler {
 		this.register(new AutoGGModule());
 		this.register(new DenickerModule());
 		this.register(new NickBotModule()); // TODO: impl
-        this.register(new QuickMathModule());
+		this.register(new QuickMathModule());
 		// bed wars
 		this.register(new ArmorAlertsModule());
 		this.register(new FinalKillsHudModule());
