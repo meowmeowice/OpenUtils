@@ -28,9 +28,11 @@ public class ModuleHandler {
 		this.register(new NullMoveModule());
 		this.register(new SprintModule());
 		// player
+		this.register(new ActionSoundsModule());
 		this.register(new NoBreakDelayModule());
 		this.register(new NoHitDelayModule());
 		// render
+		this.register(new AnimationsModule());
 		this.register(new AntiDebuffModule());
 		this.register(new AntiShuffleModule());
 		this.register(new ArrayListModule());

@@ -14,8 +14,10 @@
   "client": [
     "minecraft.client.MinecraftAccessor",
     "minecraft.client.MinecraftMixin",
+    "minecraft.client.entity.EntityPlayerMixin",
     "minecraft.client.gui.inventory.GuiContainerMixin",
     "minecraft.client.multiplayer.PlayerControllerMPAccessor",
+    "minecraft.client.multiplayer.PlayerControllerMPMixin",
     "minecraft.client.renderer.EntityRendererAccessor",
     "minecraft.client.renderer.EntityRendererMixin",
     "minecraft.client.renderer.RenderGlobalMixin",

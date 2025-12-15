@@ -1,0 +1,10 @@
+{
+  "crit": {
+    "category": "player",
+    "sounds": [
+      "openutils:crit/crit_1",
+      "openutils:crit/crit_2",
+      "openutils:crit/crit_3"
+    ]
+  }
+}
