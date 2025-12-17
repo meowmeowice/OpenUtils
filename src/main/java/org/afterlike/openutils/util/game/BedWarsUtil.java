@@ -52,11 +52,11 @@ public final class BedWarsUtil {
 		return TeamColor.fromFormattedName(player.getDisplayName().getFormattedText());
 	}
 
-    // TODO: cache team color to avoid spectating edge cases
-    public static boolean isTeammate(final @NotNull EntityPlayer self, final @NotNull EntityPlayer target) {
-        TeamColor targetColor = getTeamColor(target);
-        TeamColor selfColor = getTeamColor(self);
-
-        return targetColor != null && targetColor == selfColor;
-    }
+	// TODO: cache team color to avoid spectating edge cases
+	public static boolean isTeammate(final @NotNull EntityPlayer self,
+			final @NotNull EntityPlayer target) {
+		TeamColor targetColor = getTeamColor(target);
+		TeamColor selfColor = getTeamColor(self);
+		return targetColor != null && targetColor == selfColor;
+	}
 }

@@ -68,8 +68,8 @@ public class ArmorAlertsModule extends Module {
 			return;
 		}
 		if (BedWarsUtil.isTeammate(mc.thePlayer, player)) {
-            return;
-        }
+			return;
+		}
 		processArmor(player, stack);
 	}
 

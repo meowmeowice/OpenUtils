@@ -174,9 +174,9 @@ public class ItemAlertsModule extends Module {
 		if (player == mc.thePlayer) {
 			return;
 		}
-        if (BedWarsUtil.isTeammate(mc.thePlayer, player)) {
-            return;
-        }
+		if (BedWarsUtil.isTeammate(mc.thePlayer, player)) {
+			return;
+		}
 		processItem(player, stack);
 	}
 
