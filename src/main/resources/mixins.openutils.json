@@ -18,10 +18,12 @@
     "minecraft.client.gui.inventory.GuiContainerMixin",
     "minecraft.client.multiplayer.PlayerControllerMPAccessor",
     "minecraft.client.multiplayer.PlayerControllerMPMixin",
+    "minecraft.client.renderer.ActiveRenderInfoMixin",
     "minecraft.client.renderer.EntityRendererAccessor",
     "minecraft.client.renderer.EntityRendererMixin",
     "minecraft.client.renderer.RenderGlobalMixin",
     "minecraft.client.renderer.entity.RenderFishMixin",
+    "minecraft.client.renderer.entity.RenderManagerMixin",
     "minecraft.client.settings.KeyBindingAccessor",
     "minecraft.gui.FontRendererMixin",
     "minecraftforge.client.GuiIngameForgeMixin"

@@ -14,6 +14,7 @@ import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
 import org.afterlike.openutils.module.api.setting.impl.NumberSetting;
 import org.afterlike.openutils.module.impl.client.GuiModule;
+import org.afterlike.openutils.module.impl.render.FreeLookModule;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
@@ -181,7 +182,10 @@ public class ModuleComponent extends Component {
 	@Override
 	public void onClick(final int x, final int y, final int button) {
 		if (this.isMouseOverButton(x, y) && button == 0) {
-			this.module.toggle();
+			// Free Look should only be toggled via keybind
+			if (!(this.module instanceof FreeLookModule)) {
+				this.module.toggle();
+			}
 		}
 		if (this.isMouseOverButton(x, y) && button == 1) {
 			this.expandedSettings = !this.expandedSettings;

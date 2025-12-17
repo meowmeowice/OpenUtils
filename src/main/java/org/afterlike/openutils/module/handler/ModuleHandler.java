@@ -39,6 +39,7 @@ public class ModuleHandler {
 		this.register(new CameraModule());
 		this.register(new CapeModule());
 		this.register(new DamageTagsModule());
+		this.register(new FreeLookModule());
 		this.register(new NameHiderModule()); // TODO: impl
 		this.register(new ThickRodsModule());
 		// world
@@ -121,9 +122,6 @@ public class ModuleHandler {
 
 	@EventHandler
 	private void onKeyPress(@NotNull final KeyPressEvent event) {
-		if (!event.isPressed()) {
-			return;
-		}
 		if (mc.currentScreen != null || !ClientUtil.notNull()) {
 			return;
 		}
@@ -131,9 +129,26 @@ public class ModuleHandler {
 		if (keyCode == 0) {
 			return;
 		}
+		final boolean pressed = event.isPressed();
 		for (@NotNull final Module module : getModules()) {
 			if (module.getKeybind() == keyCode) {
-				module.toggle();
+				// Free Look requires keybind to be held
+				if (module instanceof FreeLookModule) {
+					final FreeLookModule freeLook = (FreeLookModule) module;
+					if (pressed) {
+						if (!freeLook.isEnabled()) {
+							freeLook.setEnabled(true);
+						}
+					} else {
+						if (freeLook.isEnabled()) {
+							freeLook.setEnabled(false);
+						}
+					}
+				} else {
+					if (pressed) {
+						module.toggle();
+					}
+				}
 			}
 		}
 	}

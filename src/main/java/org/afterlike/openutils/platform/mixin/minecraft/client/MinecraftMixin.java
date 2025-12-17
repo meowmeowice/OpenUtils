@@ -2,6 +2,7 @@ package org.afterlike.openutils.platform.mixin.minecraft.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -9,15 +10,18 @@ import net.minecraft.util.EnumChatFormatting;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.api.EventPhase;
 import org.afterlike.openutils.event.impl.*;
+import org.afterlike.openutils.module.impl.render.FreeLookModule;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.afterlike.openutils.util.client.UpdateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
@@ -96,5 +100,17 @@ public abstract class MinecraftMixin {
 	@Inject(method = "runTick", at = @At("RETURN"))
 	private void ou$runTick$return(@NotNull final CallbackInfo ci) {
 		OpenUtils.get().getEventBus().post(new GameTickEvent(EventPhase.POST));
+	}
+
+	@Redirect(method = "runTick",
+			at = @At(value = "FIELD",
+					target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I",
+					opcode = Opcodes.PUTFIELD))
+	private void ou$runTick$thirdPersonView(final GameSettings instance, final int value) {
+		if (OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)) {
+			OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class).reset();
+		} else {
+			instance.thirdPersonView = value;
+		}
 	}
 }
