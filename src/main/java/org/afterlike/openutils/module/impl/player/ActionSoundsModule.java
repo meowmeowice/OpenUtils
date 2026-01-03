@@ -8,7 +8,6 @@ import org.afterlike.openutils.event.impl.ReceivePacketEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
-import org.afterlike.openutils.platform.extension.minecraft.client.entity.EntityPlayerExtension;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +32,7 @@ public class ActionSoundsModule extends Module {
 				return;
 			if (packet.getEntity(mc.theWorld) != mc.thePlayer)
 				return;
-			if (!((EntityPlayerExtension) mc.thePlayer).ou$isActuallyBlocking())
+			if (!mc.thePlayer.isBlocking())
 				return;
 			mc.thePlayer.playSound("random.anvil_land", 0.7F, 1.8F);
 		}

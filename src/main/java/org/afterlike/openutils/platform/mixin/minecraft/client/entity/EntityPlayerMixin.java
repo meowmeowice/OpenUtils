@@ -10,7 +10,6 @@ import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.module.handler.ModuleHandler;
 import org.afterlike.openutils.module.impl.render.AnimationsModule;
-import org.afterlike.openutils.platform.extension.minecraft.client.entity.EntityPlayerExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayer.class)
-public class EntityPlayerMixin implements EntityPlayerExtension {
-	@Unique private boolean ou$originalBlockingState;
+public class EntityPlayerMixin {
 	@Unique private boolean ou$shouldForceBlock() {
 		EntityPlayer self = (EntityPlayer) (Object) this;
 		if (!(self instanceof EntityPlayerSP))
@@ -44,15 +42,9 @@ public class EntityPlayerMixin implements EntityPlayerExtension {
 
 	@Inject(method = "isBlocking", at = @At("RETURN"), cancellable = true)
 	private void ou$forceBlocking(CallbackInfoReturnable<Boolean> cir) {
-		ou$originalBlockingState = cir.getReturnValue();
 		if (!cir.getReturnValue() && ou$shouldForceBlock()) {
 			cir.setReturnValue(true);
 		}
-	}
-
-	@Override
-	public boolean ou$isActuallyBlocking() {
-		return ou$originalBlockingState;
 	}
 
 	@Inject(method = "getItemInUseCount", at = @At("RETURN"), cancellable = true)
