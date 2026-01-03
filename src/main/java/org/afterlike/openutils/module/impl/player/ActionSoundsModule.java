@@ -8,14 +8,18 @@ import org.afterlike.openutils.event.impl.ReceivePacketEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
+import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionSoundsModule extends Module {
+	private final @NotNull DescriptionSetting desc;
 	private final @NotNull BooleanSetting blocked;
 	private final @NotNull BooleanSetting crit;
 	public ActionSoundsModule() {
 		super("Action Sounds", ModuleCategory.PLAYER);
+		desc = this.registerSetting(
+				new DescriptionSetting("Blocked damage may not work properly with Action Sounds"));
 		blocked = this.registerSetting(new BooleanSetting("Blocked damage", true));
 		crit = this.registerSetting(new BooleanSetting("Critical hit", true));
 	}
