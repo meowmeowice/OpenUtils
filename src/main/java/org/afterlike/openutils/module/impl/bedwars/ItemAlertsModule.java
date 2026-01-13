@@ -24,6 +24,7 @@ import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.module.api.setting.impl.ModeSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
+import org.afterlike.openutils.util.client.TextUtil;
 import org.afterlike.openutils.util.game.BedWarsUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 
@@ -203,7 +204,8 @@ public class ItemAlertsModule extends Module {
 
 	private Item getEffectiveItem(final ItemStack stack) {
 		final Item rawItem = stack.getItem();
-		final String displayName = stack.getDisplayName().toLowerCase(Locale.getDefault());
+		final String displayName = TextUtil.stripColorCodes(stack.getDisplayName())
+				.toLowerCase(Locale.getDefault());
 		if (rawItem instanceof ItemPotion) {
 			for (final ItemRule rule : rules) {
 				if (rule.matchType == MatchType.POTION_SUBSTRING
