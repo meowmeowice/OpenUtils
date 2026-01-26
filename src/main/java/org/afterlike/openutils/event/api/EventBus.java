@@ -3,6 +3,9 @@ package org.afterlike.openutils.event.api;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.afterlike.openutils.event.handler.EventExecutable;
 import org.afterlike.openutils.event.handler.EventHandler;
@@ -35,8 +38,8 @@ import org.afterlike.openutils.event.handler.Listener;
  */
 
 public final class EventBus {
-	/** List of all executables in the event system */
-	private final CopyOnWriteArrayList<EventExecutable> executables = new CopyOnWriteArrayList<>();
+	/** Map of event classes to their executables */
+	private final Map<Class<? extends Event>, List<EventExecutable>> executableMap = new ConcurrentHashMap<>();
 	/**
 	 * Register an object in the event system
 	 *
@@ -49,16 +52,25 @@ public final class EventBus {
 		for (final Method method : object.getClass().getDeclaredMethods()) {
 			if (!method.isAnnotationPresent(EventHandler.class) || method.getParameterCount() <= 0)
 				continue;
-			executables.add(new EventExecutable(method, object,
-					method.getDeclaredAnnotation(EventHandler.class).value()));
+			final EventExecutable executable = new EventExecutable(method, object,
+					method.getDeclaredAnnotation(EventHandler.class).value());
+			addExecutable(executable);
 		}
 		for (final Field field : object.getClass().getDeclaredFields()) {
 			if (!field.isAnnotationPresent(EventHandler.class)
 					|| !field.getType().isAssignableFrom(Listener.class))
 				continue;
-			executables.add(new EventExecutable(field, object,
-					field.getDeclaredAnnotation(EventHandler.class).value()));
+			final EventExecutable executable = new EventExecutable(field, object,
+					field.getDeclaredAnnotation(EventHandler.class).value());
+			addExecutable(executable);
 		}
+	}
+
+	private void addExecutable(final EventExecutable executable) {
+		final Class<? extends Event> eventClass = executable.getEventClass();
+		final List<EventExecutable> executables = executableMap.computeIfAbsent(eventClass,
+				k -> new CopyOnWriteArrayList<>());
+		executables.add(executable);
 		executables.sort(Comparator.comparingInt(EventExecutable::getPriority));
 	}
 
@@ -76,8 +88,7 @@ public final class EventBus {
 	 */
 	public <U extends Event> void subscribe(final Object object, final Class<U> eventClass,
 			final Listener<U> listener, final int priority) {
-		executables.add(new EventExecutable(eventClass, listener, object, priority));
-		executables.sort(Comparator.comparingInt(EventExecutable::getPriority));
+		addExecutable(new EventExecutable(eventClass, listener, object, priority));
 	}
 
 	/**
@@ -102,8 +113,11 @@ public final class EventBus {
 	 *            the event that should be called
 	 */
 	public <U extends Event> U post(final U event) {
-		for (final EventExecutable eventExecutable : executables)
-			eventExecutable.call(event);
+		final List<EventExecutable> executables = executableMap.get(event.getClass());
+		if (executables != null) {
+			for (final EventExecutable eventExecutable : executables)
+				eventExecutable.call(event);
+		}
 		return event;
 	}
 
@@ -114,9 +128,9 @@ public final class EventBus {
 	 *            the object to unregister
 	 */
 	public void unsubscribe(final Object object) {
-		if (!subscribed(object))
-			return;
-		executables.removeIf(e -> e.getParent().equals(object));
+		for (final List<EventExecutable> executables : executableMap.values()) {
+			executables.removeIf(e -> e.getParent().equals(object));
+		}
 	}
 
 	/**
@@ -126,6 +140,11 @@ public final class EventBus {
 	 *            the object to check
 	 */
 	public boolean subscribed(final Object object) {
-		return executables.stream().anyMatch(e -> e.getParent().equals(object));
+		for (final List<EventExecutable> executables : executableMap.values()) {
+			if (executables.stream().anyMatch(e -> e.getParent().equals(object))) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

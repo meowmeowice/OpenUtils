@@ -86,6 +86,10 @@ public final class EventExecutable {
 		return priority;
 	}
 
+	public Class<? extends Event> getEventClass() {
+		return listener != null ? listener.getTypeClass() : method.getEventClass();
+	}
+
 	public void call(final Event event) {
 		if (listener != null)
 			listener.call(event);

@@ -52,8 +52,9 @@ public final class ListenerHandler<T extends Event> {
 		this.listener.call((T) event);
 	}
 
-	public Class<?> getTypeClass() {
-		return typeClass;
+	@SuppressWarnings("unchecked")
+	public Class<? extends Event> getTypeClass() {
+		return (Class<? extends Event>) typeClass;
 	}
 
 	public Type getType() {

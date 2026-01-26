@@ -35,28 +35,17 @@ public final class MethodHandler {
 	public MethodHandler(final Method method, final Object parent) {
 		this.method = method;
 		this.parent = parent;
-		if (!this.isValid(this.method)) {
+		if (method.getParameterCount() != 1
+				|| !Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
 			this.method = null;
 			return;
 		}
 		this.method.setAccessible(true);
 	}
 
-	private boolean isValid(final Method method) {
-		if (method.getParameterCount() == 0)
-			return false;
-		final Class<?> parameterTypes = method.getParameterTypes()[0];
-		final Class<?>[] interfaces = parameterTypes.getInterfaces();
-		final Class<?> superclass = parameterTypes.getSuperclass();
-		if (interfaces.length != 0)
-			return this.isValid(interfaces[0]);
-		if (this.isValid(parameterTypes) || this.isValid(superclass))
-			return true;
-		return this.isValid(superclass.getInterfaces()[0]);
-	}
-
-	private boolean isValid(final Class<?> clazz) {
-		return clazz.equals(Event.class);
+	@SuppressWarnings("unchecked")
+	public Class<? extends Event> getEventClass() {
+		return (Class<? extends Event>) this.method.getParameterTypes()[0];
 	}
 
 	public void call(final Event event) {
