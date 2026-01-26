@@ -14,8 +14,9 @@ public class FontRendererMixin {
 		if (string == null) {
 			return null;
 		}
-		if (OpenUtils.get().getModuleHandler().isEnabled(AntiShuffleModule.class)) {
-			string = string.replaceAll("§k", "");
+		if (OpenUtils.get().getModuleHandler().isEnabled(AntiShuffleModule.class)
+				&& string.contains("§k")) {
+			string = string.replace("§k", "");
 		}
 		return string;
 	}
@@ -26,8 +27,9 @@ public class FontRendererMixin {
 		if (string == null) {
 			return null;
 		}
-		if (OpenUtils.get().getModuleHandler().isEnabled(AntiShuffleModule.class)) {
-			string = string.replaceAll("§k", "");
+		if (OpenUtils.get().getModuleHandler().isEnabled(AntiShuffleModule.class)
+				&& string.contains("§k")) {
+			string = string.replace("§k", "");
 		}
 		return string;
 	}

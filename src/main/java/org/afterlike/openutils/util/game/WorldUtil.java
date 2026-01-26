@@ -12,9 +12,15 @@ import org.afterlike.openutils.util.client.TextUtil;
 
 public class WorldUtil {
 	private static final Minecraft mc = Minecraft.getMinecraft();
+	private static List<String> cachedScoreboard = Collections.emptyList();
+	private static int lastTick = -1;
 	public static List<String> getScoreboard() {
 		if (mc.theWorld == null) {
 			return Collections.emptyList();
+		}
+		if (mc.thePlayer != null && mc.thePlayer.ticksExisted == lastTick
+				&& !cachedScoreboard.isEmpty()) {
+			return cachedScoreboard;
 		}
 		Scoreboard scoreboard = mc.theWorld.getScoreboard();
 		if (scoreboard == null) {
@@ -38,6 +44,10 @@ public class WorldUtil {
 		Collections.reverse(scoreList);
 		for (String line : scoreList) {
 			result.add(TextUtil.stripAliens(line));
+		}
+		if (mc.thePlayer != null) {
+			lastTick = mc.thePlayer.ticksExisted;
+			cachedScoreboard = Collections.unmodifiableList(result);
 		}
 		return result;
 	}
