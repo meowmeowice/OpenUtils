@@ -247,7 +247,8 @@ public class DenickerModule extends Module {
 					"b1732d69af0612111e8f15ccc105013fe2ce08c4c65b65833b6456e4f01238ef",
 					"519d503b6cd7565119361cf6b51ef8d294a951b4b512d2727f28b5cc9d784626",
 					"d2da19710b8a4171ac9b17984dd95d042d92742d72a74ba40450d7494a24321",
-					"1d9e8dafe7d87bb7cba7eb3d8d2d5bf58eab72ecdfdf9ecce3d1c03871c0"));
+					"1d9e8dafe7d87bb7cba7eb3d8d2d5bf58eab72ecdfdf9ecce3d1c03871c0",
+					"3cce5c4d27979e98afea0d43acca8ebddc7e74a4e62480486e62ee3512"));
 	public DenickerModule() {
 		super("Denicker", ModuleCategory.HYPIXEL);
 		showFailed = this.registerSetting(new BooleanSetting("Show failed denicks", true));
@@ -300,6 +301,9 @@ public class DenickerModule extends Module {
 				String skinUrl = getString(getObj(getObj(root, "textures"), "SKIN"), "url");
 				if (skinUrl != null) {
 					String hash = lastPathSegment(skinUrl);
+					if (hash != null) {
+						ClientUtil.sendDebugMessage(hash + " | " + info.getGameProfile().getName());
+					}
 					String profileName = getString(root, "profileName");
 					if (profileName != null && !profileName.isEmpty() && hash != null
 							&& !NICK_HASHES.contains(hash)) {
