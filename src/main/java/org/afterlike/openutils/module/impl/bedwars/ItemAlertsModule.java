@@ -114,7 +114,7 @@ public class ItemAlertsModule extends Module {
 				MatchType.POTION_SUBSTRING, "invisibility"));
 		// specials (display-name substring)
 		addRule(new ItemRule(popupTower, "§6Pop-up Tower", true, detectPopupTower,
-				MatchType.NAME_SUBSTRING, "popup tower"));
+				MatchType.NAME_SUBSTRING, "pop-up tower"));
 		addRule(new ItemRule(dreamDefender, "§fDream Defender", true, detectIronGolem,
 				MatchType.NAME_SUBSTRING, "dream defender"));
 		// rotation items (share rotation setting, not important)
