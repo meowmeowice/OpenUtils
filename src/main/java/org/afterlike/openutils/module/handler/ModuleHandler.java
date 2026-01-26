@@ -27,6 +27,7 @@ public class ModuleHandler {
 		this.register(new SprintModule());
 		// player
 		this.register(new ActionSoundsModule());
+		this.register(new GhostLiquidFixModule());
 		this.register(new NoBreakDelayModule());
 		this.register(new NoHitDelayModule());
 		// render
