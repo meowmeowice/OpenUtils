@@ -63,7 +63,6 @@ public class Module {
 		if (this.enabled == enabled)
 			return;
 		this.enabled = enabled;
-		OpenUtils.get().getModuleHandler().updateEnabledModules();
 		if (enabled) {
 			onEnable();
 			OpenUtils.get().getEventBus().subscribe(this);

@@ -18,8 +18,7 @@ import org.afterlike.openutils.util.client.ClientUtil;
 
 public class ModuleHandler {
 	private final Minecraft mc = Minecraft.getMinecraft();
-	private final List<Module> moduleList = Collections.synchronizedList(new ArrayList<>());
-	private final List<Module> enabledModules = Collections.synchronizedList(new ArrayList<>());
+	private final Map<Class<? extends Module>, Module> moduleList = new ConcurrentHashMap<>();
 	public void initialize() {
 		OpenUtils.get().getEventBus().subscribe(this);
 		// movement
@@ -68,43 +67,23 @@ public class ModuleHandler {
 	}
 
 	private void register(final Module module) {
-		moduleList.add(module);
+		moduleList.put(module.getClass(), module);
 	}
 
-	public void updateEnabledModules() {
-		synchronized (moduleList) {
-			enabledModules.clear();
-			for (final Module module : moduleList) {
-				if (module.isEnabled()) {
-					enabledModules.add(module);
-				}
-			}
-		}
-	}
-
-	public List<Module> getModules() {
-		return moduleList;
+	public Collection<Module> getModules() {
+		return moduleList.values();
 	}
 
 	public boolean isEnabled(final Class<? extends Module> moduleClass) {
-		synchronized (enabledModules) {
-			for (final Module module : enabledModules) {
-				if (moduleClass.isInstance(module)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		final Module module = moduleList.get(moduleClass);
+		return module != null && module.isEnabled();
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Module> T getModuleClass(final Class<T> moduleClass) {
-		synchronized (moduleList) {
-			for (Module module : moduleList) {
-				if (moduleClass.isInstance(module)) {
-					return (T) module;
-				}
-			}
+		final Module module = moduleList.get(moduleClass);
+		if (module != null) {
+			return (T) module;
 		}
 		throw new IllegalStateException("Module not registered: " + moduleClass.getName());
 	}
@@ -112,17 +91,13 @@ public class ModuleHandler {
 	public List<Module> getModulesInCategory(final ModuleCategory category) {
 		final List<Module> modulesInCategory = new ArrayList<>();
 		synchronized (moduleList) {
-			for (final Module module : moduleList) {
+			for (final Module module : moduleList.values()) {
 				if (module.getCategory().equals(category)) {
 					modulesInCategory.add(module);
 				}
 			}
 		}
 		return modulesInCategory;
-	}
-
-	public List<Module> getEnabledModules() {
-		return enabledModules;
 	}
 
 	@EventHandler
@@ -139,16 +114,7 @@ public class ModuleHandler {
 			if (module.getKeybind() == keyCode) {
 				// Free Look requires keybind to be held
 				if (module instanceof FreeLookModule) {
-					final FreeLookModule freeLook = (FreeLookModule) module;
-					if (pressed) {
-						if (!freeLook.isEnabled()) {
-							freeLook.setEnabled(true);
-						}
-					} else {
-						if (freeLook.isEnabled()) {
-							freeLook.setEnabled(false);
-						}
-					}
+					module.setEnabled(pressed);
 				} else {
 					if (pressed) {
 						module.toggle();
