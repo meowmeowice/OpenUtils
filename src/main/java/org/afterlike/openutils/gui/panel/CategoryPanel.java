@@ -81,9 +81,8 @@ public class CategoryPanel {
 			for (final Component c : this.components) {
 				h += c.getHeight();
 			}
-			final int bg = new Color(0, 0, 0, 110).getRGB();
 			Gui.drawRect(this.x - 2, this.y, this.x + this.width + 2,
-					this.y + this.headerHeight + h + 4, bg);
+					this.y + this.headerHeight + h + 4, 0x6e000000);
 		}
 		BooleanComponent.drawQuadWithAlpha(this.x - 2, this.y, this.x + this.width + 2,
 				this.y + this.headerHeight + 3, -1);
