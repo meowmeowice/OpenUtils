@@ -1,7 +1,6 @@
 package org.afterlike.openutils.module.handler;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.handler.EventHandler;
@@ -19,7 +18,7 @@ import org.afterlike.openutils.util.client.ClientUtil;
 
 public class ModuleHandler {
 	private final Minecraft mc = Minecraft.getMinecraft();
-	private final Map<Class<? extends Module>, Module> moduleList = new ConcurrentHashMap<>();
+	private final Map<Class<? extends Module>, Module> moduleList = new LinkedHashMap<>();
 	public void initialize() {
 		OpenUtils.get().getEventBus().subscribe(this);
 		// movement
