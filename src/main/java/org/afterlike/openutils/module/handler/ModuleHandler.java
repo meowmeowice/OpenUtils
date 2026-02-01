@@ -1,6 +1,7 @@
 package org.afterlike.openutils.module.handler;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.handler.EventHandler;
