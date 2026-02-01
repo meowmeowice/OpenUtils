@@ -37,45 +37,48 @@ public class EntityRendererMixin {
 	@Redirect(method = "orientCamera", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/entity/Entity;rotationYaw:F", opcode = Opcodes.GETFIELD))
 	private float ou$orientCamera$rotationYaw(final Entity instance) {
-		return OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)
-				? OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class)
-						.getCameraYaw()
-				: instance.rotationYaw;
+		final FreeLookModule freeLookModule = OpenUtils.get().getModuleHandler()
+				.getModuleClass(FreeLookModule.class);
+		return freeLookModule.isEnabled() ? freeLookModule.getCameraYaw() : instance.rotationYaw;
 	}
 
 	@Redirect(method = "orientCamera", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/entity/Entity;prevRotationYaw:F", opcode = Opcodes.GETFIELD))
 	private float ou$orientCamera$prevRotationYaw(final Entity instance) {
-		return OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)
-				? OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class)
-						.getCameraYaw()
+		final FreeLookModule freeLookModule = OpenUtils.get().getModuleHandler()
+				.getModuleClass(FreeLookModule.class);
+		return freeLookModule.isEnabled()
+				? freeLookModule.getCameraYaw()
 				: instance.prevRotationYaw;
 	}
 
 	@Redirect(method = "orientCamera", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/entity/Entity;rotationPitch:F", opcode = Opcodes.GETFIELD))
 	private float ou$orientCamera$rotationPitch(final Entity instance) {
-		return OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)
-				? OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class)
-						.getCameraPitch()
+		final FreeLookModule freeLookModule = OpenUtils.get().getModuleHandler()
+				.getModuleClass(FreeLookModule.class);
+		return freeLookModule.isEnabled()
+				? freeLookModule.getCameraPitch()
 				: instance.rotationPitch;
 	}
 
 	@Redirect(method = "orientCamera", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/entity/Entity;prevRotationPitch:F", opcode = Opcodes.GETFIELD))
 	private float ou$orientCamera$prevRotationPitch(final Entity instance) {
-		return OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)
-				? OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class)
-						.getCameraPitch()
+		final FreeLookModule freeLookModule = OpenUtils.get().getModuleHandler()
+				.getModuleClass(FreeLookModule.class);
+		return freeLookModule.isEnabled()
+				? freeLookModule.getCameraPitch()
 				: instance.prevRotationPitch;
 	}
 
 	@Redirect(method = "updateCameraAndRender", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/client/Minecraft;inGameHasFocus:Z", opcode = Opcodes.GETFIELD))
 	private boolean ou$updateCameraAndRender$overrideMouse(final Minecraft instance) {
-		if (OpenUtils.get().getModuleHandler().isEnabled(FreeLookModule.class)) {
-			return OpenUtils.get().getModuleHandler().getModuleClass(FreeLookModule.class)
-					.overrideMouse();
+		final FreeLookModule freeLookModule = OpenUtils.get().getModuleHandler()
+				.getModuleClass(FreeLookModule.class);
+		if (freeLookModule.isEnabled()) {
+			return freeLookModule.overrideMouse();
 		}
 		return instance.inGameHasFocus;
 	}

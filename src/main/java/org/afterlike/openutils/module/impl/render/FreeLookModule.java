@@ -1,6 +1,7 @@
 package org.afterlike.openutils.module.impl.render;
 
 import org.afterlike.openutils.event.handler.EventHandler;
+import org.afterlike.openutils.event.impl.GameTickEvent;
 import org.afterlike.openutils.event.impl.WorldLoadEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
@@ -91,6 +92,13 @@ public class FreeLookModule extends Module {
 	@EventHandler
 	private void onWorldLoad(final WorldLoadEvent event) {
 		if (isEnabled()) {
+			setEnabled(false);
+		}
+	}
+
+	@EventHandler
+	private void onGameTick(final GameTickEvent event) {
+		if (isEnabled() && mc.currentScreen != null) {
 			setEnabled(false);
 		}
 	}
