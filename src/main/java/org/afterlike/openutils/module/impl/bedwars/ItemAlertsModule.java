@@ -1,11 +1,7 @@
 package org.afterlike.openutils.module.impl.bedwars;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -18,6 +14,7 @@ import net.minecraft.network.play.server.S04PacketEntityEquipment;
 import net.minecraft.util.EnumChatFormatting;
 import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.ReceivePacketEvent;
+import org.afterlike.openutils.event.impl.WorldLoadEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
@@ -260,6 +257,11 @@ public class ItemAlertsModule extends Module {
 			return rule != null && rule.important;
 		}
 		return true;
+	}
+
+	@EventHandler
+	private void onWorldLoad(final WorldLoadEvent event) {
+		alerts.clear();
 	}
 
 	@Override

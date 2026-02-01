@@ -1,8 +1,6 @@
 package org.afterlike.openutils.module.impl.bedwars;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +22,6 @@ import org.afterlike.openutils.util.game.GameModeUtil;
 
 public class FinalKillsHudModule extends Module implements HudModule {
 	private final Position position = new Position(5, 50);
-	private final DescriptionSetting disclaimer;
 	private final BooleanSetting editPosition;
 	private final BooleanSetting dropShadow;
 	private final BooleanSetting showVoidKills;
@@ -35,8 +32,7 @@ public class FinalKillsHudModule extends Module implements HudModule {
 			.compile("§([0-9a-fk-or])([A-Za-z0-9_]+)");
 	public FinalKillsHudModule() {
 		super("Final Kills HUD", ModuleCategory.BEDWARS);
-		disclaimer = this
-				.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
+		this.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
 		editPosition = this.registerSetting(new BooleanSetting("Edit position", false));
 		dropShadow = this.registerSetting(new BooleanSetting("Drop shadow", true));
 		showVoidKills = this.registerSetting(new BooleanSetting("Show void kills", true));
@@ -87,19 +83,18 @@ public class FinalKillsHudModule extends Module implements HudModule {
 			return;
 		if (finalKills.isEmpty())
 			return;
-		int y = position.getY();
-		int delta = 0;
-		final List<Map.Entry<String, Integer>> sortedKills = new ArrayList<>(finalKills.entrySet());
-		sortedKills.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
-		for (final Map.Entry<String, Integer> entry : sortedKills) {
-			if (entry.getKey().equals(VOID_KEY) && !showVoidKills.getValue())
-				continue;
-			final String displayName = entry.getKey().equals(VOID_KEY) ? VOID_KEY : entry.getKey();
-			final String line = "§r" + displayName + ": §f" + entry.getValue();
-			mc.fontRendererObj.drawString(line, position.getX(), y, 0xFFFFFFFF, useHudDropShadow());
-			y += mc.fontRendererObj.FONT_HEIGHT + 2;
-			delta -= 90;
-		}
+		final int[] y = {position.getY()};
+		finalKills.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> {
+			if (!entry.getKey().equals(VOID_KEY) || showVoidKills.getValue()) {
+				final String displayName = entry.getKey().equals(VOID_KEY)
+						? VOID_KEY
+						: entry.getKey();
+				final String line = "§r" + displayName + ": §f" + entry.getValue();
+				mc.fontRendererObj.drawString(line, position.getX(), y[0], 0xFFFFFFFF,
+						useHudDropShadow());
+				y[0] += mc.fontRendererObj.FONT_HEIGHT + 2;
+			}
+		});
 	}
 
 	@EventHandler

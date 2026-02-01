@@ -2,13 +2,7 @@ package org.afterlike.openutils.module.impl.render;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import org.afterlike.openutils.event.api.EventPhase;
@@ -118,9 +112,9 @@ public class DamageTagsModule extends Module {
 				final String teamColorCode = (displayName.length() >= 2)
 						? displayName.substring(0, 2)
 						: "§r";
-				renderHealth = teamColorCode + formatDoubleStr(round(difference, 1));
+				renderHealth = teamColorCode + formatDoubleStr(Math.round(difference));
 			} else {
-				renderHealth = formatDoubleStr(round(Math.abs(difference), 1));
+				renderHealth = formatDoubleStr(Math.round(Math.abs(difference)));
 			}
 			if (renderHealth.endsWith("0"))
 				continue;
@@ -282,7 +276,7 @@ public class DamageTagsModule extends Module {
 	}
 
 	@EventHandler
-	private void onWorldJoin(final WorldLoadEvent event) {
+	private void onWorldLoad(final WorldLoadEvent event) {
 		clearAll();
 	}
 
@@ -313,13 +307,6 @@ public class DamageTagsModule extends Module {
 		final double dy = ay - by;
 		final double dz = az - bz;
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
-	}
-
-	private static double round(final double value, final int places) {
-		if (places < 0)
-			return value;
-		final double factor = Math.pow(10, places);
-		return Math.round(value * factor) / factor;
 	}
 
 	private static String formatDoubleStr(final double val) {

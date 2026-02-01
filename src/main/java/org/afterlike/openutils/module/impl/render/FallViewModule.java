@@ -94,9 +94,7 @@ public class FallViewModule extends Module implements HudModule {
 			return false;
 		if (disableWhileFlying.getValue() && mc.thePlayer.capabilities.allowFlying)
 			return false;
-		if (onlyWhileSneaking.getValue() && !mc.thePlayer.isSneaking())
-			return false;
-		return true;
+		return !onlyWhileSneaking.getValue() || mc.thePlayer.isSneaking();
 	}
 
 	@EventHandler
