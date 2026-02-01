@@ -1,10 +1,6 @@
 package org.afterlike.openutils.module.impl.render;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.afterlike.openutils.OpenUtils;
 import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.RenderOverlayEvent;
@@ -69,7 +65,7 @@ public class ArrayListModule extends Module implements HudModule {
 	private void ensureCache() {
 		if (cacheBuilt)
 			return;
-		final List<Module> all = OpenUtils.get().getModuleHandler().getModules();
+		final Collection<Module> all = OpenUtils.get().getModuleHandler().getModules();
 		sortedAlpha.clear();
 		sortedAlpha.addAll(all);
 		sortedAlpha.sort(ALPHA_COMPARATOR);
