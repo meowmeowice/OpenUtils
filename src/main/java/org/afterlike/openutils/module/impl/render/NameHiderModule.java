@@ -8,7 +8,6 @@ import org.afterlike.openutils.util.client.TextUtil;
 
 public class NameHiderModule extends Module {
 	private final TextFieldSetting customName;
-	private String cachedUsername;
 	public NameHiderModule() {
 		super("Name Hider", ModuleCategory.RENDER);
 		customName = this
@@ -19,14 +18,8 @@ public class NameHiderModule extends Module {
 		if (!ClientUtil.notNull()) {
 			return text;
 		}
-		String username = mc.thePlayer.getName();
-		if (!username.equals(cachedUsername)) {
-			cachedUsername = username;
-		}
-		if (!text.contains(cachedUsername)) {
-			return text;
-		}
+		final String username = mc.thePlayer.getName();
 		String replacement = TextUtil.replaceColorCodes(customName.getValue());
-		return text.replace(cachedUsername, replacement);
+		return text.replace(username, replacement);
 	}
 }
