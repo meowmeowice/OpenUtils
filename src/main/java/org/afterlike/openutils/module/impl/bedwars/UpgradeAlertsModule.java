@@ -12,6 +12,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
 import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.ReceivePacketEvent;
+import org.afterlike.openutils.event.impl.WorldLoadEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
@@ -21,23 +22,11 @@ import org.afterlike.openutils.util.game.BedWarsUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 
 public class UpgradeAlertsModule extends Module {
-	private final DescriptionSetting desc;
 	private final BooleanSetting pingSound;
 	private final Map<String, Set<UpgradeType>> teamUpgrades;
-	private enum UpgradeType {
-		SHARPENED_SWORDS("Sharpened Swords"), REINFORCED_ARMOR("Reinforced Armor");
-		private final String label;
-		UpgradeType(final String label) {
-			this.label = label;
-		}
-
-		private String getLabel() {
-			return label;
-		}
-	}
 	public UpgradeAlertsModule() {
 		super("Upgrade Alerts", ModuleCategory.BEDWARS);
-		desc = this.registerSetting(
+		this.registerSetting(
 				new DescriptionSetting("Alerts you when teams purchase diamond upgrades"));
 		pingSound = this.registerSetting(new BooleanSetting("Ping Sound", true));
 		teamUpgrades = new HashMap<>();
@@ -80,6 +69,11 @@ public class UpgradeAlertsModule extends Module {
 		}
 	}
 
+	@EventHandler
+	private void onWorldLoad(final WorldLoadEvent event) {
+		teamUpgrades.clear();
+	}
+
 	private void notifyUpgrade(final String teamKey, final String upgrade) {
 		ClientUtil.sendMessage(teamKey + " Team §7purchased §b" + upgrade);
 		if (pingSound.getValue()) {
@@ -95,5 +89,16 @@ public class UpgradeAlertsModule extends Module {
 	@Override
 	protected void onDisable() {
 		teamUpgrades.clear();
+	}
+	private enum UpgradeType {
+		SHARPENED_SWORDS("Sharpened Swords"), REINFORCED_ARMOR("Reinforced Armor");
+		private final String label;
+		UpgradeType(final String label) {
+			this.label = label;
+		}
+
+		private String getLabel() {
+			return label;
+		}
 	}
 }
