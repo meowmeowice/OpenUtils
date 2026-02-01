@@ -64,9 +64,10 @@ public class TargetHudModule extends Module implements HudModule {
 		if (!ClientUtil.notNull() || target == null) {
 			return;
 		}
-		EntityPlayer entity = target;
+		final EntityPlayer entity = target;
+		final long currentTime = System.currentTimeMillis();
 		if (entity.isDead || mc.thePlayer.getDistanceToEntity(entity) > 15
-				|| (System.currentTimeMillis() - lastAttackTime > persistTime.getValue() * 1000)) {
+				|| (currentTime - lastAttackTime > persistTime.getValue() * 1000)) {
 			target = null;
 			previousTarget = null;
 			return;
@@ -76,18 +77,18 @@ public class TargetHudModule extends Module implements HudModule {
 		float targetHealth = entity.getHealth() / 2.0f + targetAbsorption;
 		if (entity != previousTarget) {
 			previousTarget = entity;
-			animStartTime = System.currentTimeMillis();
+			animStartTime = currentTime;
 			oldHealth = targetHealth;
 			newHealth = targetHealth;
 			maxHealth = entity.getMaxHealth() / 2.0f;
 		}
-		long elapsed = System.currentTimeMillis() - animStartTime;
+		long elapsed = currentTime - animStartTime;
 		if (elapsed >= ANIM_DURATION_MS) {
 			if (oldHealth != newHealth) {
 				oldHealth = newHealth;
 			}
 			if (newHealth != targetHealth) {
-				animStartTime = System.currentTimeMillis();
+				animStartTime = currentTime;
 				oldHealth = newHealth;
 				newHealth = targetHealth;
 				elapsed = 0;
