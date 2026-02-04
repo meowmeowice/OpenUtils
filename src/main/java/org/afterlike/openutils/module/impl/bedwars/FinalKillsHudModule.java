@@ -9,6 +9,7 @@ import org.afterlike.openutils.event.handler.EventHandler;
 import org.afterlike.openutils.event.impl.GameTickEvent;
 import org.afterlike.openutils.event.impl.ReceiveChatEvent;
 import org.afterlike.openutils.event.impl.RenderOverlayEvent;
+import org.afterlike.openutils.event.impl.WorldLoadEvent;
 import org.afterlike.openutils.module.api.Module;
 import org.afterlike.openutils.module.api.ModuleCategory;
 import org.afterlike.openutils.module.api.hud.HudModule;
@@ -31,7 +32,7 @@ public class FinalKillsHudModule extends Module implements HudModule {
 	private static final String VOID_KEY = "§8Void";
 	private static final Pattern NAME_CHUNK_PATTERN = Pattern
 			.compile("§([0-9a-fk-or])([A-Za-z0-9_]+)");
-	private BedWarsUtil.TeamColor myTeamColor = null;
+	private BedWarsUtil.TeamColor playerTeamColor = null;
 	public FinalKillsHudModule() {
 		super("Final Kills HUD", ModuleCategory.BEDWARS);
 		this.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
@@ -70,11 +71,10 @@ public class FinalKillsHudModule extends Module implements HudModule {
 			}
 			return;
 		}
-		// Check if teammates only filter is enabled
 		if (teammatesOnly.getValue()) {
-			final BedWarsUtil.TeamColor victimTeamColor = BedWarsUtil.TeamColor
-					.fromFormattedName(lastColorCode + lastPlayerName);
-			if (victimTeamColor == null || victimTeamColor != myTeamColor) {
+			final BedWarsUtil.TeamColor killerTeamColor = BedWarsUtil.TeamColor
+					.fromColorCode(lastColorCode);
+			if (killerTeamColor != playerTeamColor) {
 				ClientUtil.sendDebugMessage(
 						"skipped non-teammate kill: " + lastColorCode + lastPlayerName);
 				return;
@@ -116,18 +116,23 @@ public class FinalKillsHudModule extends Module implements HudModule {
 			return;
 		if (GameModeUtil.getBedWarsStatus() != 3) {
 			resetTracking();
-		} else if (ClientUtil.notNull() && myTeamColor == null) {
-			// Cache player's team color when in game
-			myTeamColor = BedWarsUtil.getTeamColor(mc.thePlayer);
-			if (myTeamColor != null) {
-				ClientUtil.sendDebugMessage("detected team color: " + myTeamColor.getDisplayName());
+		} else if (ClientUtil.notNull() && playerTeamColor == null) {
+			playerTeamColor = BedWarsUtil.getTeamColor(mc.thePlayer);
+			if (playerTeamColor != null) {
+				ClientUtil.sendDebugMessage(
+						"detected team color: " + playerTeamColor.getDisplayName());
 			}
 		}
 	}
 
+	@EventHandler
+	private void onWorldLoad(final WorldLoadEvent event) {
+		resetTracking();
+	}
+
 	private void resetTracking() {
 		finalKills.clear();
-		myTeamColor = null;
+		playerTeamColor = null;
 	}
 
 	@Override
