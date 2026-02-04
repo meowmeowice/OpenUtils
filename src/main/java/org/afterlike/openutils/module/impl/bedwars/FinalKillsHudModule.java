@@ -18,6 +18,7 @@ import org.afterlike.openutils.module.api.setting.impl.BooleanSetting;
 import org.afterlike.openutils.module.api.setting.impl.DescriptionSetting;
 import org.afterlike.openutils.util.client.ClientUtil;
 import org.afterlike.openutils.util.client.TextUtil;
+import org.afterlike.openutils.util.game.BedWarsUtil;
 import org.afterlike.openutils.util.game.GameModeUtil;
 
 public class FinalKillsHudModule extends Module implements HudModule {
@@ -25,17 +26,19 @@ public class FinalKillsHudModule extends Module implements HudModule {
 	private final BooleanSetting editPosition;
 	private final BooleanSetting dropShadow;
 	private final BooleanSetting showVoidKills;
+	private final BooleanSetting teammatesOnly;
 	private final Map<String, Integer> finalKills = new HashMap<>();
 	private static final String VOID_KEY = "§8Void";
-	// TODO: implement teammates only filter
 	private static final Pattern NAME_CHUNK_PATTERN = Pattern
 			.compile("§([0-9a-fk-or])([A-Za-z0-9_]+)");
+	private BedWarsUtil.TeamColor myTeamColor = null;
 	public FinalKillsHudModule() {
 		super("Final Kills HUD", ModuleCategory.BEDWARS);
 		this.registerSetting(new DescriptionSetting("Hypixel language must be ENGLISH!"));
 		editPosition = this.registerSetting(new BooleanSetting("Edit position", false));
 		dropShadow = this.registerSetting(new BooleanSetting("Drop shadow", true));
 		showVoidKills = this.registerSetting(new BooleanSetting("Show void kills", true));
+		teammatesOnly = this.registerSetting(new BooleanSetting("Teammates only", false));
 	}
 
 	@EventHandler
@@ -66,6 +69,16 @@ public class FinalKillsHudModule extends Module implements HudModule {
 				ClientUtil.sendDebugMessage("counted void kill: " + finalKills.get(VOID_KEY));
 			}
 			return;
+		}
+		// Check if teammates only filter is enabled
+		if (teammatesOnly.getValue()) {
+			final BedWarsUtil.TeamColor victimTeamColor = BedWarsUtil.TeamColor
+					.fromFormattedName(lastColorCode + lastPlayerName);
+			if (victimTeamColor == null || victimTeamColor != myTeamColor) {
+				ClientUtil.sendDebugMessage(
+						"skipped non-teammate kill: " + lastColorCode + lastPlayerName);
+				return;
+			}
 		}
 		final String displayName = lastColorCode + lastPlayerName;
 		finalKills.put(displayName, finalKills.getOrDefault(displayName, 0) + 1);
@@ -103,11 +116,18 @@ public class FinalKillsHudModule extends Module implements HudModule {
 			return;
 		if (GameModeUtil.getBedWarsStatus() != 3) {
 			resetTracking();
+		} else if (ClientUtil.notNull() && myTeamColor == null) {
+			// Cache player's team color when in game
+			myTeamColor = BedWarsUtil.getTeamColor(mc.thePlayer);
+			if (myTeamColor != null) {
+				ClientUtil.sendDebugMessage("detected team color: " + myTeamColor.getDisplayName());
+			}
 		}
 	}
 
 	private void resetTracking() {
 		finalKills.clear();
+		myTeamColor = null;
 	}
 
 	@Override
